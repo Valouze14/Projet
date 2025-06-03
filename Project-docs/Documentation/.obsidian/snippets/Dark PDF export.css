@@ -1,0 +1,27 @@
+/* Dark PDF export v0.3.0
+   github.com/zamsyt */
+
+@media print {
+  :root body {
+
+    color-scheme: dark;
+    --color-base-00: #1e1e1e;
+    --color-base-10: #242424;
+    --color-base-20: #262626;
+    --color-base-25: #2a2a2a;
+    --color-base-30: #363636;
+    --color-base-35: #3F3F3F;
+    --color-base-40: #555;
+    --color-base-50: #666;
+    --color-base-60: #999;
+    --color-base-70: #bababa;
+    --color-base-100: #dadada;
+
+  }
+}
+
+.print .markdown-preview-view {
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+}
+

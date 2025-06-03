@@ -1,0 +1,193 @@
+{
+  "main": {
+    "id": "460b2bb70c2b55b3",
+    "type": "split",
+    "children": [
+      {
+        "id": "92dbedf3cae9cd35",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3079e40a3b9d0257",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Rapport.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Rapport"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "ba59890a44a74b57",
+    "type": "split",
+    "children": [
+      {
+        "id": "e31304b87e707676",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "dfd57e37238d52d6",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "4bed1f2eaae67e80",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Rechercher"
+            }
+          },
+          {
+            "id": "aa26880a6e34d0dc",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Signet"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "right": {
+    "id": "6008a5dca39e5f77",
+    "type": "split",
+    "children": [
+      {
+        "id": "4a6f1fd6f387ca16",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "59cbb163a021eced",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Projet.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Projet"
+            }
+          },
+          {
+            "id": "61a2be07e68715fb",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Notes.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Liens sortants de Notes"
+            }
+          },
+          {
+            "id": "14901020aee0ef11",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Mots-clés"
+            }
+          },
+          {
+            "id": "0abfdd12f80f576d",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Notes.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Plan de Notes"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Ouvrir le sélecteur rapide": false,
+      "graph:Ouvrir la vue graphique": false,
+      "canvas:Créer une nouvelle toile": false,
+      "daily-notes:Ouvrir la note quotidienne": false,
+      "templates:Insérer le modèle": false,
+      "command-palette:Ouvrir la palette de commandes": false
+    }
+  },
+  "active": "3079e40a3b9d0257",
+  "lastOpenFiles": [
+    "Rapport.md",
+    "Projet.md",
+    "Notes.md",
+    "Untitled.md",
+    "infrastructure_kubernetes_updated.md",
+    "infrastructure_kubernetes.md",
+    "Notes.pdf",
+    "Master/Master.vmsd.lck/M15074.lck",
+    "Master/Master-Snapshot10.vmem.lck/M19109.lck",
+    "Master/Master-Snapshot10.vmem.lck",
+    "Master/564d53fb-5c4e-96ef-38a0-102466367bcd.vmem",
+    "Master/564d53fb-5c4e-96ef-38a0-102466367bcd.vmem.lck/M39169.lck",
+    "Master/Worker1-cl1.vmdk.lck/M07128.lck",
+    "Master/Worker1-cl1-000001.vmdk.lck/M33529.lck",
+    "Master/Worker1-cl1-000003.vmdk.lck/M47213.lck",
+    "Master/Worker1-cl1-000006.vmdk.lck/M30863.lck",
+    "Pasted image 20250413190834.png",
+    "Pasted image 20250413190828.png"
+  ]
+}

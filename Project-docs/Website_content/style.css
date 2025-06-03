@@ -1,0 +1,304 @@
+/* Variables CSS */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --text-color: #333;
+    --bg-light: #f8f9fa;
+    --bg-dark: #343a40;
+    --link-color: #007bff;
+    --link-hover-color: #0056b3;
+    --border-color: #dee2e6;
+    --card-bg: white;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Ombre légèrement plus prononcée */
+    --section-padding-desktop: 80px 20px;
+    --section-padding-mobile: 40px 15px;
+    --container-max-width: 1200px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-light);
+    overflow-x: hidden; /* Empêche le débordement horizontal */
+    scroll-behavior: smooth; /* Défilement doux */
+}
+
+.container {
+    width: 90%;
+    max-width: var(--container-max-width);
+    margin: auto;
+    padding: 0 15px; /* Padding horizontal pour les bords */
+}
+
+/* Transitions pour les sections (opacité, transformation, hauteur, padding) */
+.content-section {
+    padding: var(--section-padding-desktop); /* Padding par défaut desktop */
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out,
+                height 0.7s ease-out, padding 0.7s ease-out; /* Transitions plus lentes */
+    animation: none !important; /* Désactive toute animation de chargement CSS par défaut */
+    opacity: 1; /* Visibilité par défaut */
+    transform: translateY(0);
+}
+
+/* Classe pour cacher les sections (quand le PDF est affiché) */
+.content-section.hidden {
+    opacity: 0;
+    transform: translateY(20px); /* Glisse légèrement vers le bas en cachant */
+    height: 0; /* Réduit la hauteur pour qu'elle ne prenne plus d'espace */
+    padding-top: 0; /* Retire les paddings verticaux */
+    padding-bottom: 0;
+    overflow: hidden; /* Cache le contenu qui pourrait dépasser pendant la transition */
+    pointer-events: none; /* Empêche les interactions avec les éléments cachés */
+}
+
+
+/* Header */
+.site-header {
+    background: var(--bg-dark);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.site-header h1 {
+    margin: 0;
+    font-size: 2em;
+    color: white;
+}
+
+/* Section d'Introduction (Hero) */
+.hero-pdf {
+    background: linear-gradient(to right, #e9ecef, #dee2e6);
+    text-align: center;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px; /* Hauteur minimale pour la section d'intro */
+}
+
+.hero-pdf .container {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 20px;
+}
+
+.hero-content h2 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 2.5em;
+}
+
+.hero-content .subtitle {
+    font-size: 1.2em;
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+}
+
+.cta-buttons {
+    margin-top: 20px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 0 10px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transition de base */
+}
+
+.primary-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: 2px solid var(--primary-color);
+}
+
+.primary-btn:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-3px);
+}
+
+.secondary-btn {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.secondary-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-3px);
+}
+
+/* Style spécifique du bouton "Fermer" */
+#close-pdf-btn {
+    margin-top: 30px;
+    display: block; /* Pour centrer avec margin auto */
+    margin-left: auto;
+    margin-right: auto;
+    transition: opacity 0.5s ease-out; /* Transition pour l'apparition/disparition */
+}
+
+#close-pdf-btn.hidden { /* Utilise la même classe 'hidden' que les sections pour cohérence */
+    opacity: 0;
+    pointer-events: none; /* Désactive les clics */
+}
+
+
+/* Section du Lecteur PDF */
+.pdf-viewer-section {
+    background-color: var(--bg-light); /* S'assurer d'un fond pour la section du lecteur */
+    /* Padding hérité de .content-section */
+    text-align: center;
+}
+
+.pdf-viewer-section h2 {
+    color: var(--dark-text);
+    margin-bottom: 30px;
+    font-size: 2em;
+}
+
+/* Style de la zone où l'iframe est insérée */
+#pdf-viewer-area {
+    margin-top: 20px;
+    width: 100%;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh; /* Hauteur minimale pour la zone du lecteur */
+}
+
+/* Style de l'iframe du PDF */
+#pdf-viewer-area iframe {
+    display: block;
+    width: 98%; /* Augmente légèrement la largeur */
+    max-width: 1100px; /* Augmente considérablement la largeur maximale pour les grands écrans */
+    height: 90vh; /* Augmente la hauteur pour prendre plus de l'écran visible */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    background-color: var(--card-bg);
+}
+
+/* Section Fonctionnalités */
+#features-section {
+    /* Padding hérité de .content-section */
+    text-align: center;
+    background-color: var(--card-bg); /* Fond blanc pour cette section */
+}
+
+#features-section h2 {
+    color: var(--dark-text);
+    margin-bottom: 40px;
+    font-size: 2em;
+}
+
+/* Grille de fonctionnalités */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.feature-item {
+    background-color: var(--bg-light); /* Fond légèrement plus clair pour les items */
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre plus légère pour les items */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-item svg {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    width: 40px;
+    height: 40px;
+}
+
+.feature-item h3 {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.feature-item p {
+    font-size: 0.95em;
+    color: var(--secondary-color);
+}
+
+.feature-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer */
+.site-footer {
+    background: var(--bg-dark);
+    color: var(--bg-light);
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    font-size: 0.9em;
+}
+
+/* Responsiveness */
+@media (min-width: 768px) {
+    .hero-pdf .container {
+         flex-direction: row;
+         text-align: left;
+    }
+    .hero-content, .hero-image {
+        flex: 1;
+    }
+     .hero-image {
+        text-align: right;
+     }
+     .hero-content .cta-buttons {
+        text-align: left;
+     }
+}
+
+@media (max-width: 767px) {
+    .container {
+        width: 95%;
+    }
+
+     .hero-pdf {
+        padding: var(--section-padding-mobile);
+     }
+
+     .hero-content h2 {
+        font-size: 2em;
+      }
+
+     .cta-buttons {
+         display: flex;
+         flex-direction: column;
+         gap: 15px;
+         margin-top: 20px;
+     }
+     .btn {
+         margin: 0 auto;
+         width: fit-content;
+     }
+
+      .content-section {
+          padding: var(--section-padding-mobile);
+      }
+
+       .features-grid {
+           grid-template-columns: 1fr;
+       }
+}

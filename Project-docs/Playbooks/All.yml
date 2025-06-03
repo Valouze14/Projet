@@ -1,0 +1,252 @@
+---
+- name: Configuration initiale des serveurs # Nom du playbook.
+  hosts: all # Exécute le playbook sur tous les hôtes de l'inventaire.
+  become: yes # Les tâches s'exécuteront avec les privilèges root.
+
+  tasks: # Section des tâches à exécuter.
+    - name: Mise à jour de la liste des paquets # Met à jour le cache des paquets et met à niveau la distribution.
+      apt: # Module Ansible pour la gestion des paquets APT.
+        update_cache: yes # Met à jour le cache.
+        upgrade: dist # Met à niveau tous les paquets installés.
+      tags: # Balises pour cibler cette tâche.
+        - update
+
+    - name: Définir les entrées des hôtes
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          192.168.142.137 Master
+          192.168.142.144 Worker1
+          192.168.142.143 Worker2
+        backup: yes # Crée une sauvegarde du fichier original avant modification
+      tags:
+        - hosts_config
+
+    - name: Définir le nom d'hôte pour la VM Master # Définit le nom d'hôte "Master".
+      hostname: # Module Ansible pour définir le nom d'hôte.
+        name: Master
+      when: inventory_hostname == '192.168.142.137' # Conditionne l'exécution à l'adresse IP spécifiée.
+      tags:
+        - hostname_master
+
+    - name: Définir le nom d'hôte pour la VM Worker 1 # Définit le nom d'hôte "Worker1".
+      hostname:
+        name: Worker1
+      when: inventory_hostname == '192.168.142.144' # Conditionne l'exécution à l'adresse IP spécifiée.
+      tags:
+        - hostname_worker1
+
+    - name: Définir le nom d'hôte pour la VM Worker 2 # Définit le nom d'hôte "Worker2".
+      hostname:
+        name: Worker2
+      when: inventory_hostname == '192.168.142.143' # Conditionne l'exécution à l'adresse IP spécifiée.
+      tags:
+        - hostname_worker2
+
+    - name: Installer python3 et python3-pip # Installe Python 3 et pip.
+      apt:
+        name:
+          - python3
+          - python3-pip
+      tags:
+        - python_install
+
+    - name: Installer les paquets nécessaires pour Docker # Installe les dépendances requises pour Docker.
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg2
+          - software-properties-common
+        state: present # Assure que les paquets sont installés.
+        update_cache: yes # Met à jour le cache avant l'installation.
+      tags:
+        - docker_install
+
+    - name: Ajouter la clé GPG officielle de Docker # Télécharge et ajoute la clé GPG de Docker.
+      shell: "curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg"
+      args:
+        creates: /usr/share/keyrings/docker-archive-keyring.gpg # Exécute la commande seulement si le fichier n'existe pas.
+      tags:
+        - docker_install
+
+    - name: Ajouter le dépôt Docker à la liste des sources APT # Ajoute le dépôt Docker aux sources APT.
+      lineinfile: # Module pour gérer les lignes dans les fichiers.
+        path: /etc/apt/sources.list.d/docker.list
+        line: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+        create: yes # Crée le fichier s'il n'existe pas.
+        mode: '0644' # Définit les permissions du fichier.
+      tags:
+        - docker_install
+
+    - name: Mettre à jour l'index des paquets après l'ajout du dépôt Docker # Met à jour le cache après l'ajout du dépôt.
+      apt:
+        update_cache: yes
+      tags:
+        - docker_install
+
+    - name: Installer Docker Engine, CLI et Containerd # Installe les composants principaux de Docker.
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+      tags:
+        - docker_install
+
+    - name: S'assurer que le service Docker est démarré et activé au démarrage # Démarre et active le service Docker.
+      systemd: # Module pour gérer les services systemd.
+        name: docker
+        state: started # Démarre le service.
+        enabled: yes # Active le service au démarrage.
+      tags:
+        - docker_service
+
+    - name: Vérifier le statut du service Docker (pour information, ne modifie rien) # Vérifie le statut du service Docker.
+      command: systemctl status docker
+      register: docker_status # Enregistre la sortie de la commande.
+      tags:
+        - docker_check
+
+    - name: Afficher le statut du service Docker # Affiche le statut du service Docker.
+      debug: # Module pour afficher des informations de débogage.
+        var: docker_status.stdout_lines
+      tags:
+        - docker_check
+
+    - name: Ajouter val_master au groupe docker # Ajoute l'utilisateur val_master au groupe docker.
+      user: # Module pour gérer les utilisateurs.
+        name: val_master
+        groups: docker
+        append: yes # Ajoute l'utilisateur au groupe sans le retirer des autres.
+      when: inventory_hostname == '192.168.142.137' # Cible uniquement la VM Master.
+      tags:
+        - docker_post_install
+
+    - name: Ajouter val_worker1 au groupe docker # Ajoute l'utilisateur val_worker1 au groupe docker.
+      user:
+        name: val_worker1
+        groups: docker
+        append: yes
+      when: inventory_hostname == '192.168.142.144' # Cible uniquement la VM Worker 1.
+      tags:
+        - docker_post_install
+
+    - name: Ajouter val_worker2 au groupe docker # Ajoute l'utilisateur val_worker2 au groupe docker.
+      user:
+        name: val_worker2
+        groups: docker
+        append: yes
+      when: inventory_hostname == '192.168.142.143' # Cible uniquement la VM Worker 2.
+      tags:
+        - docker_post_install
+
+    - name: Exécuter 'docker run hello-world' pour vérifier l'installation # Exécute un conteneur simple pour vérifier l'installation de Docker.
+      command: docker run hello-world
+      become: false # Exécute la commande sans privilèges sudo.
+      register: docker_hello_world_result # Enregistre la sortie de la commande.
+
+    - name: Afficher le résultat de 'docker run hello-world' # Affiche le résultat de l'exécution de hello-world.
+      debug:
+        var: docker_hello_world_result.stdout_lines
+      tags:
+        - docker_post_install
+
+    - name: Charger le module br_netfilter # Charge le module noyau br_netfilter.
+      modprobe: # Module Ansible pour gérer les modules noyau.
+        name: br_netfilter
+        state: present # Assure que le module est chargé.
+
+    - name: Mise à jour de la liste des paquets # Met à jour la liste des paquets disponibles.
+      apt:
+          update_cache: yes
+
+    - name: Installer les paquets nécessaires à Kubernetes # Installe les dépendances nécessaires pour ajouter le dépôt Kubernetes.
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gpg
+        state: present
+
+    - name: Ajouter la clé GPG officielle de Kubernetes # Télécharge et ajoute la clé GPG pour le dépôt Kubernetes.
+      shell: "curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg"
+      args:
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg # Exécute la commande seulement si le fichier n'existe pas.
+
+    - name: Ajouter le dépôt Kubernetes aux sources APT # Ajoute le dépôt Kubernetes aux sources de paquets APT.
+      lineinfile: # Module pour gérer les lignes dans les fichiers.
+        path: /etc/apt/sources.list.d/kubernetes.list
+        line: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /"
+        create: yes # Crée le fichier s'il n'existe pas.
+        mode: '0644' # Définit les permissions du fichier.
+
+    - name: Mise à jour de la liste des paquets après l'ajout du dépôt Kubernetes # Met à jour la liste des paquets après l'ajout du dépôt Kubernetes.
+      apt:
+        update_cache: yes
+
+    - name: Installer kubelet, kubeadm et kubectl # Installe les outils Kubernetes essentiels.
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present # Assure que les paquets sont installés.
+
+    - name: Marquer kubelet, kubeadm et kubectl en "hold" # Empêche la mise à jour automatique des paquets Kubernetes.
+      dpkg_selections: # Module pour gérer les sélections dpkg.
+        name: "{{ item }}"
+        selection: hold
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+    - name: Activer et démarrer le service kubelet # Active et démarre le service kubelet.
+      systemd: # Module pour gérer les services systemd.
+        name: kubelet
+        state: started # Démarre le service.
+        enabled: yes # Active le service au démarrage du système.
+
+    - name: Télécharger le paquet cri-dockerd # Télécharge le fichier .deb de cri-dockerd.
+      get_url: # Module Ansible pour télécharger des fichiers.
+        url: https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.17/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
+        dest: /tmp/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb # Chemin de destination du fichier téléchargé.
+        mode: '0644' # Définit les permissions du fichier.
+      tags:
+        - cri_dockerd_install
+
+    - name: Installer le paquet cri-dockerd # Installe cri-dockerd à partir du fichier .deb téléchargé.
+      ansible.builtin.apt: # Utilisation explicite du module apt.builtin pour l'installation de paquets locaux.
+        deb: /tmp/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
+      tags:
+        - cri_dockerd_install
+
+    - name: Initialiser le cluster Kubernetes (Master uniquement) # Initialise le cluster Kubernetes avec kubeadm.
+      command: kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket unix:///var/run/cri-dockerd.sock
+      when: inventory_hostname == '192.168.142.137' # Cette tâche s'exécute uniquement sur l'hôte Master.
+      tags:
+        - kubeadm_init
+
+    - name: Récupérer la commande de jointure kubeadm (Master uniquement) # Génère et récupère la commande `kubeadm join`.
+      command: kubeadm token create --print-join-command
+      delegate_to: 192.168.142.137 # Cette tâche s'exécute sur le master, même si le playbook cible "all".
+      run_once: true # S'assure que cette tâche ne s'exécute qu'une seule fois.
+      register: kubeadm_join_output_master # Enregistre la sortie sur l'hôte délégué (le master).
+      # Le 'when' n'est pas strictement nécessaire ici grâce à 'delegate_to' et 'run_once',
+      # mais peut être utile pour la clarté ou si la tâche était conditionnelle à l'hôte courant.
+
+    - name: Afficher la commande de jointure kubeadm (Master uniquement) # Affiche la sortie de la commande de jointure.
+      debug: # Affiche la sortie de la commande de jointure.
+        var: kubeadm_join_output_master.stdout
+      when: inventory_hostname == '192.168.142.137' # Exécute cette tâche uniquement sur le master.
+
+    - name: Faire joindre les Workers au cluster Kubernetes # Exécute la commande de jointure sur les workers.
+      command: "{{ hostvars['192.168.142.137'].kubeadm_join_output_master.stdout | regex_replace('\\n$', '') }} --cri-socket unix:///var/run/cri-dockerd.sock"
+      when: inventory_hostname != '192.168.142.137' # Exécute cette tâche sur tous les hôtes sauf le master.
+      register: kubeadm_join_output_workers # Enregistre la sortie sur les workers.
+      tags:
+        - kubeadm_join_workers
