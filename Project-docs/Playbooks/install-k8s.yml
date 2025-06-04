@@ -1,0 +1,64 @@
+- name: Install K8S
+  hosts: all
+  become: true
+  tasks:
+  - name: Installer les paquets nécessaires à Kubernetes
+    apt:
+      name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gpg
+      state: present
+  - name: Ajouter la clé GPG officielle de Kubernetes
+    shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | gpg
+      --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    args:
+      creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  - name: Ajouter le dépôt Kubernetes aux sources APT
+    lineinfile:
+      path: /etc/apt/sources.list.d/kubernetes.list
+      line: deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/
+        /
+      create: true
+      mode: '0644'
+  - name: Mise à jour de la liste des paquets après l'ajout du dépôt Kubernetes
+    apt:
+      update_cache: true
+  - name: Installer kubelet, kubeadm et kubectl
+    apt:
+      name:
+      - kubelet
+      - kubeadm
+      - kubectl
+      state: present
+  - name: Marquer kubelet, kubeadm et kubectl en "hold"
+    dpkg_selections:
+      name: '{{ item }}'
+      selection: hold
+    loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+  - name: Activer et démarrer le service kubelet
+    systemd:
+      name: kubelet
+      state: started
+      enabled: true
+  - name: Initialiser le cluster Kubernetes (Master uniquement)
+    command: kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket unix:///var/run/cri-dockerd.sock
+    when: inventory_hostname == '192.168.142.137'
+  - name: Récupérer la commande de jointure kubeadm (Master uniquement)
+    command: kubeadm token create --print-join-command
+    delegate_to: 192.168.142.137
+    run_once: true
+    register: kubeadm_join_output_master
+  - name: Afficher la commande de jointure kubeadm (Master uniquement)
+    debug:
+      var: kubeadm_join_output_master.stdout
+    when: inventory_hostname == '192.168.142.137'
+  - name: Faire joindre les Workers au cluster Kubernetes
+    command: '{{ hostvars[''192.168.142.137''].kubeadm_join_output_master.stdout |
+      regex_replace(''\n$'', '''') }} --cri-socket unix:///var/run/cri-dockerd.sock'
+    when: inventory_hostname != '192.168.142.137'
+    register: kubeadm_join_output_workers

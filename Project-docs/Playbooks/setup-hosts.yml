@@ -1,0 +1,27 @@
+- name: Setup Hosts
+  hosts: all
+  become: true
+  tasks:
+  - name: Définir les entrées des hôtes
+    blockinfile:
+      path: /etc/hosts
+      block: '192.168.142.137 Master
+
+        192.168.142.144 Worker1
+
+        192.168.142.143 Worker2
+
+        '
+      backup: true
+  - name: Définir le nom d'hôte pour la VM Master
+    hostname:
+      name: Master
+    when: inventory_hostname == '192.168.142.137'
+  - name: Définir le nom d'hôte pour la VM Worker 1
+    hostname:
+      name: Worker1
+    when: inventory_hostname == '192.168.142.144'
+  - name: Définir le nom d'hôte pour la VM Worker 2
+    hostname:
+      name: Worker2
+    when: inventory_hostname == '192.168.142.143'
