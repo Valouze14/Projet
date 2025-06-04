@@ -2,10 +2,10 @@
   hosts: all
   become: true
   tasks:
-  
+
 ############################################################
 
-  - name: Définir les entrées des hôtes
+  - name: Définir les entrées des hôtes + nom de domaine du site web
     blockinfile:
       path: /etc/hosts
       block: '192.168.142.137 Master
@@ -14,22 +14,11 @@
 
         192.168.142.143 Worker2
 
-        '
-      backup: true
-
-############################################################
-
-  - name: Définir les entrées des hôtes
-    blockinfile:
-      path: /etc/hosts
-      block: '192.168.142.137 Master
-
-        192.168.142.144 Worker1
-
-        192.168.142.143 Worker2
+        192.168.142.137 mon-site-local.test
 
         '
       backup: true
+
 
 ############################################################      
 
@@ -45,3 +34,25 @@
     hostname:
       name: Worker2
     when: inventory_hostname == '192.168.142.143'
+
+############################################################
+
+  - name: Installer python3 et python3-pip
+    apt:
+      name:
+      - python3
+      - python3-pip
+
+############################################################
+
+  - name: Charger le module br_netfilter
+    modprobe:
+      name: br_netfilter
+      state: present
+
+############################################################
+
+  - name: Mise à jour de la liste des paquets
+    apt:
+      update_cache: true
+      upgrade: dist

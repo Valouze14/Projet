@@ -66,6 +66,7 @@ ssh-keygen -t rsa -b 4096   # Avec passphrase "valentin"
 
 ssh-copy-id val_worker1@192.168.142.144
 ssh-copy-id val_worker2@192.168.142.143
+ssh-copy-id val_master@192.168.142.137
 ```
 
 🧾 **Résolution de nom** (`/etc/hosts`) :
@@ -185,12 +186,20 @@ sudo dpkg -i cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
 
 🚀 **Initialiser le cluster** :
 ```bash
-sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket unix:///var/run/cri-dockerd.sock
+sudo kubeadm init --cri-socket unix:///var/run/cri-dockerd.sock
 ```
 
 🔧 **Configurer kubectl** :
+
 ```bash
+# Si on est en root
 export KUBECONFIG=/etc/kubernetes/admin.conf
+
+# Si on est pas root
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
 ```
 
 ---
@@ -324,15 +333,24 @@ docker compose --project-directory  .\Project-docs\ up --build
 
 A voir en Annexe (très long)
 
+**Récupération des plyabook, config docker, kubernets etc via github : **
+
+
+
+
 ---
 
-### 🔹 Étapes 2 : Création des playbooks Ansible pour automatiser l’installation et la configuration
+### 🔹 Étapes 2 : Exécution des playbooks pour provisionner l’ensemble des machines
 
 ▶️ **Exécution des playbooks sur le parc** : 
 
+```bash
+ansible-playbook Projet/Project-docs/Playbooks/All.yml -i ansible/inventories.ini -K
+```
+
 ---
 
-### 🔹 Étapes 3 : Création des playbooks Ansible pour automatiser l’installation et la configuration
+### 🔹 Étapes 3 : Validation du bon fonctionnement
 
 **Validation de l’installation automatisée** : 
 
@@ -341,7 +359,7 @@ A voir en Annexe (très long)
 <div style="page-break-after: always;"></div>
 <hr class="gradient-warm">    <!-- Ligne jaune/orange -->
 
-## Phase 6 : Automatisation avec Ansible
+## Phase 6 : Maintenance et Supervision
 
 <hr class="gradient-warm">    <!-- Ligne jaune/orange -->
 

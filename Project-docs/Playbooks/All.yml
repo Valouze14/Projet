@@ -1,4 +1,3 @@
 - import_playbook: setup-hosts.yml
 - import_playbook: install-docker.yml
 - import_playbook: install-k8s.yml
-- import_playbook: post-install.yml

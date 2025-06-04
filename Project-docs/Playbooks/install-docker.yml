@@ -118,9 +118,20 @@
       url: https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.17/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
       dest: /tmp/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
       mode: '0644'
-      
+
 ############################################################
 
   - name: Installer le paquet cri-dockerd
     ansible.builtin.apt:
       deb: /tmp/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
+
+############################################################
+# Nouvelle section : Lancer docker compose up
+############################################################
+
+  - name: Lancer docker compose up avec le répertoire de projet spécifié
+    ansible.builtin.command: docker compose --project-directory ./Project-docs/ up --build
+    args:
+      chdir: /home/Projet # Spécifie le répertoire de travail
+    when: inventory_hostname == '192.168.142.137' # Exécuter uniquement sur le nœud maître
+
