@@ -2,6 +2,9 @@
   hosts: all
   become: true
   tasks:
+
+############################################################
+
   - name: Installer les paquets nécessaires pour Docker
     apt:
       name:
@@ -13,11 +16,15 @@
       state: present
       update_cache: true
 
+############################################################
+
   - name: Ajouter la clé GPG officielle de Docker
     shell: curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor
       -o /usr/share/keyrings/docker-archive-keyring.gpg
     args:
       creates: /usr/share/keyrings/docker-archive-keyring.gpg
+
+############################################################
 
   - name: Ajouter le dépôt Docker à la liste des sources APT
     lineinfile:
@@ -28,9 +35,14 @@
       create: true
       mode: '0644'
 
+############################################################
+
   - name: Mettre à jour l'index des paquets après l'ajout du dépôt Docker
     apt:
       update_cache: true
+
+############################################################
+
   - name: Installer Docker Engine, CLI et Containerd
     apt:
       name:
@@ -38,47 +50,77 @@
       - docker-ce-cli
       - containerd.io
       state: present
+
+############################################################
+
   - name: S'assurer que le service Docker est démarré et activé au démarrage
     systemd:
       name: docker
       state: started
       enabled: true
+
+############################################################
+
   - name: Vérifier le statut du service Docker (pour information, ne modifie rien)
     command: systemctl status docker
     register: docker_status
+
+############################################################
+
   - name: Afficher le statut du service Docker
     debug:
       var: docker_status.stdout_lines
+
+############################################################
+
   - name: Ajouter val_master au groupe docker
     user:
       name: val_master
       groups: docker
       append: true
     when: inventory_hostname == '192.168.142.137'
+
+############################################################
+
   - name: Ajouter val_worker1 au groupe docker
     user:
       name: val_worker1
       groups: docker
       append: true
     when: inventory_hostname == '192.168.142.144'
+
+############################################################
+
   - name: Ajouter val_worker2 au groupe docker
     user:
       name: val_worker2
       groups: docker
       append: true
     when: inventory_hostname == '192.168.142.143'
+
+############################################################
+
   - name: Exécuter 'docker run hello-world' pour vérifier l'installation
     command: docker run hello-world
     become: false
     register: docker_hello_world_result
+
+############################################################
+
   - name: Afficher le résultat de 'docker run hello-world'
     debug:
       var: docker_hello_world_result.stdout_lines
+
+############################################################
+
   - name: Télécharger le paquet cri-dockerd
     get_url:
       url: https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.17/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
       dest: /tmp/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
       mode: '0644'
+      
+############################################################
+
   - name: Installer le paquet cri-dockerd
     ansible.builtin.apt:
       deb: /tmp/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb

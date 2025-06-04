@@ -249,7 +249,7 @@ COPY Config/nginx/certs/server.key /etc/nginx/certs/server.key
 
 ---
 
-### 🔹 Étapes 2 : Écriture d’un Dockerfile (pour contenir l’application web statique)
+### 🔹 Étapes 2 : Création d’un docker-compose.yml pour l’orchestration locale
 
 ⚙️ **Création du `docker-compose.yml`** :
 ```bash
@@ -279,9 +279,13 @@ services:
 docker compose --project-directory  .\Project-docs\ up --build
 ```
 
+![[Pasted image 20250604214223.png]]
+
+![[Pasted image 20250604214528.png]]
+
 ---
 
-### 🔹 Étapes 4 : Déploiement initial avec Docker Compose pour validation
+### 🔹 Étapes 4 : Création des manifests Kubernetes pour le déploiement sur le cluster
 
 **Manifests Kubernetes (`Deployment`, `Service`, etc.)** :
 

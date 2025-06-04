@@ -2,6 +2,9 @@
   hosts: all
   become: true
   tasks:
+  
+############################################################
+
   - name: Définir les entrées des hôtes
     blockinfile:
       path: /etc/hosts
@@ -13,6 +16,23 @@
 
         '
       backup: true
+
+############################################################
+
+  - name: Définir les entrées des hôtes
+    blockinfile:
+      path: /etc/hosts
+      block: '192.168.142.137 Master
+
+        192.168.142.144 Worker1
+
+        192.168.142.143 Worker2
+
+        '
+      backup: true
+
+############################################################      
+
   - name: Définir le nom d'hôte pour la VM Master
     hostname:
       name: Master

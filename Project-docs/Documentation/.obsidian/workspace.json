@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "Rapport.md",
-                "mode": "preview",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
@@ -171,6 +171,9 @@
   },
   "active": "3079e40a3b9d0257",
   "lastOpenFiles": [
+    "Pasted image 20250604214528.png",
+    "Pasted image 20250604214320.png",
+    "Pasted image 20250604214223.png",
     "Rapport.md",
     "Projet.md",
     "Notes.md",
