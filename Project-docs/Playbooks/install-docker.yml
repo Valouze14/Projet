@@ -132,6 +132,6 @@
   - name: Lancer docker compose up avec le répertoire de projet spécifié
     ansible.builtin.command: docker compose --project-directory ./Project-docs/ up --build -d
     args:
-      chdir: /home/Projet # Spécifie le répertoire de travail
+      chdir: /home/val_master/Documents/Projet    # Spécifie le répertoire de travail
     when: inventory_hostname == '192.168.142.137' # Exécuter uniquement sur le nœud maître
 

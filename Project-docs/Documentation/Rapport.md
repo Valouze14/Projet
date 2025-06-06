@@ -345,7 +345,8 @@ A voir en Annexe (très long)
 ▶️ **Exécution des playbooks sur le parc** : 
 
 ```bash
-ansible-playbook Projet/Project-docs/Playbooks/All.yml -i Projet/Ansible/hosts.ini -k
+ansible-playbook Projet/Project-docs/Playbooks/All.yml -i Projet/Ansible/hosts.ini -K
+
 ```
 
 ---
