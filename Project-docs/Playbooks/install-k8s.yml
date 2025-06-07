@@ -105,26 +105,29 @@
       sudo chown $(id -u):$(id -g) $HOME/.kube/config
     args:
       creates: "{{ ansible_env.HOME }}/.kube/config"
-    when: inventory_hostname == '192.168.142.137'
 
 ############################################################
 # Nouvelle section : Copie du fichier admin.conf vers les nœuds workers
 ############################################################
 
-  - name: Copier le fichier admin.conf du maître vers les workers
-    ansible.builtin.copy:
-      src: /etc/kubernetes/admin.conf
-      dest: /etc/kubernetes/admin.conf
-      mode: '0644'
-      remote_src: true # Indique que la source est sur la machine distante (maître)
-    delegate_to: 192.168.142.137 # Exécute cette tâche sur le maître
-    when: inventory_hostname in ['192.168.142.144', '192.168.142.143'] # Applique aux workers spécifiés
+- name: Copier le fichier admin.conf vers les noeuds distants
+  hosts: workers
+  become: true  # Si tu as besoin des droits root pour écrire dans /etc/kubernetes
+  tasks:
+    - name: Copier admin.conf depuis la machine de contrôle
+      copy:
+        src: /etc/kubernetes/admin.conf  # sur la machine de contrôle (137)
+        dest: /etc/kubernetes/admin.conf  # sur les machines distantes (143, 144)
 
 ############################################################
 # Nouvelle section : Application de Flannel CNI
 ############################################################
 
-  - name: Appliquer le manifeste Flannel CNI
-    ansible.builtin.command: kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
-    when: inventory_hostname in ['192.168.142.137', '192.168.142.144', '192.168.142.143'] # Appliquer sur toutes les machines spécifiées
+- name: Copier le fichier admin.conf vers les noeuds distants
+  hosts: master
+  become: true  # Si tu as besoin des droits root pour écrire dans /etc/kubernetes
+  tasks:
+    - name: Appliquer le manifeste Flannel CNI
+      ansible.builtin.command: kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
+ 
