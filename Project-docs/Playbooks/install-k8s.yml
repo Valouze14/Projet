@@ -142,14 +142,14 @@
   become: false
   tasks:
     - name: Créer le répertoire .kube et copier le fichier admin.conf (Master uniquement)
-      ansible.builtin.shell:
+      ansible.builtin.shell: |
         mkdir -p /home/val_worker1/.kube
         sudo cp -i /etc/kubernetes/admin.conf /home/val_worker1/.kube/config
         sudo chown val_worker1:val_worker1 /home/val_worker1/.kube/config
       when: inventory_hostname == '192.168.142.144'
 
     - name: Créer le répertoire .kube et copier le fichier admin.conf (Master uniquement)
-      ansible.builtin.shell:
+      ansible.builtin.shell: |
         mkdir -p /home/val_worker2/.kube
         sudo cp -i /etc/kubernetes/admin.conf /home/val_worker2/.kube/config
         sudo chown val_worker2:val_worker2 /home/val_worker2/.kube/config
