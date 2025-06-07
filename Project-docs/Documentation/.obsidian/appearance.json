@@ -1,8 +1,8 @@
 {
   "enabledCssSnippets": [
     "code-block-style",
-    "supercharged-links-gen",
-    "Dark PDF export"
+    "Dark PDF export",
+    "supercharged-links-gen"
   ],
   "theme": "obsidian",
   "cssTheme": ""

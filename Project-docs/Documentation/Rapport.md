@@ -312,6 +312,11 @@ docker compose --project-directory  .\Project-docs\ up --build
 
 <hr class="gradient-warm">    <!-- Ligne jaune/orange -->
 
+
+
+```bash
+git clone https://github.com/Valouze14/Projet.git
+```
 ### 🔹 Étapes 1 : Création des playbooks Ansible pour automatiser l’installation et la configuration
 
 📜**Création du fichier d'inventories.ini** :
