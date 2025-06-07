@@ -288,6 +288,8 @@ services:
 docker compose --project-directory  .\Project-docs\ up --build
 ```
 
+https://mon-site-local.test
+
 ![[Pasted image 20250604214223.png]]
 
 ![[Pasted image 20250604214528.png]]

@@ -68,32 +68,31 @@
 
 ############################################################
 
-  - name: Initialiser le cluster Kubernetes (Master uniquement)
-    command: kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket unix:///var/run/cri-dockerd.sock
-    when: inventory_hostname == '192.168.142.137'
+  - name: Initialiser le cluster Kubernetes (Master uniquement) # Initialise le cluster Kubernetes avec kubeadm.
+    command: kubeadm init --cri-socket unix:///var/run/cri-dockerd.sock
+    when: inventory_hostname == '192.168.142.137' # Cette tâche s'exécute uniquement sur l'hôte Master.
+    tags:
+      - kubeadm_init
 
-############################################################
-
-  - name: Récupérer la commande de jointure kubeadm (Master uniquement)
+  - name: Récupérer la commande de jointure kubeadm (Master uniquement) # Génère et récupère la commande `kubeadm join`.
     command: kubeadm token create --print-join-command
-    delegate_to: 192.168.142.137
-    run_once: true
-    register: kubeadm_join_output_master
+    delegate_to: 192.168.142.137 # Cette tâche s'exécute sur le master, même si le playbook cible "all".
+    run_once: true # S'assure que cette tâche ne s'exécute qu'une seule fois.
+    register: kubeadm_join_output_master # Enregistre la sortie sur l'hôte délégué (le master).
+    # Le 'when' n'est pas strictement nécessaire ici grâce à 'delegate_to' et 'run_once',
+    # mais peut être utile pour la clarté ou si la tâche était conditionnelle à l'hôte courant.
 
-############################################################
-
-  - name: Afficher la commande de jointure kubeadm (Master uniquement)
-    debug:
+  - name: Afficher la commande de jointure kubeadm (Master uniquement) # Affiche la sortie de la commande de jointure.
+    debug: # Affiche la sortie de la commande de jointure.
       var: kubeadm_join_output_master.stdout
-    when: inventory_hostname == '192.168.142.137'
+    when: inventory_hostname == '192.168.142.137' # Exécute cette tâche uniquement sur le master.
 
-############################################################
-
-  - name: Faire joindre les Workers au cluster Kubernetes
-    command: '{{ hostvars[''192.168.142.137''].kubeadm_join_output_master.stdout |
-      regex_replace(''\n$'', '''') }} --cri-socket unix:///var/run/cri-dockerd.sock'
-    when: inventory_hostname != '192.168.142.137'
-    register: kubeadm_join_output_workers
+  - name: Faire joindre les Workers au cluster Kubernetes # Exécute la commande de jointure sur les workers.
+    command: "{{ hostvars['192.168.142.137'].kubeadm_join_output_master.stdout | regex_replace('\\n$', '') }} --cri-socket unix:///var/run/cri-dockerd.sock"
+    when: inventory_hostname != '192.168.142.137' # Exécute cette tâche sur tous les hôtes sauf le master.
+    register: kubeadm_join_output_workers # Enregistre la sortie sur les workers.
+    tags:
+      - kubeadm_join_workers
 
 ############################################################
 # Nouvelle section : Configuration de kubectl sur le nœud maître
