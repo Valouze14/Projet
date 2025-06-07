@@ -1,133 +1,148 @@
-- name: Install K8S
+############################################################
+# 1. Installation des prérequis Kubernetes
+############################################################
+- name: Installer les paquets et composants Kubernetes
   hosts: all
   become: true
   tasks:
+    - name: Installer les paquets nécessaires
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gpg
+        state: present
+
+    - name: Ajouter la clé GPG officielle de Kubernetes
+      shell: >
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key |
+        gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      args:
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    - name: Ajouter le dépôt Kubernetes
+      lineinfile:
+        path: /etc/apt/sources.list.d/kubernetes.list
+        line: deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /
+        create: true
+        mode: '0644'
+
+    - name: Mise à jour des paquets
+      apt:
+        update_cache: true
+
+    - name: Installer kubelet, kubeadm et kubectl
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+
+    - name: Marquer kubelet, kubeadm et kubectl en hold
+      dpkg_selections:
+        name: '{{ item }}'
+        selection: hold
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+    - name: Activer et démarrer le service kubelet
+      systemd:
+        name: kubelet
+        enabled: true
+        state: started
+
 
 ############################################################
-
-  - name: Installer les paquets nécessaires à Kubernetes
-    apt:
-      name:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - gpg
-      state: present
-
+# 2. Initialisation du master Kubernetes
 ############################################################
-
-  - name: Ajouter la clé GPG officielle de Kubernetes
-    shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | gpg
-      --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-    args:
-      creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-
-############################################################
-
-  - name: Ajouter le dépôt Kubernetes aux sources APT
-    lineinfile:
-      path: /etc/apt/sources.list.d/kubernetes.list
-      line: deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/
-        /
-      create: true
-      mode: '0644'
-############################################################
-
-  - name: Mise à jour de la liste des paquets après l'ajout du dépôt Kubernetes
-    apt:
-      update_cache: true
-
-############################################################
-
-  - name: Installer kubelet, kubeadm et kubectl
-    apt:
-      name:
-      - kubelet
-      - kubeadm
-      - kubectl
-      state: present
-
-############################################################
-
-  - name: Marquer kubelet, kubeadm et kubectl en "hold"
-    dpkg_selections:
-      name: '{{ item }}'
-      selection: hold
-    loop:
-    - kubelet
-    - kubeadm
-    - kubectl
-
-############################################################
-
-  - name: Activer et démarrer le service kubelet
-    systemd:
-      name: kubelet
-      state: started
-      enabled: true
-
-############################################################
-
-  - name: Initialiser le cluster Kubernetes (Master uniquement) # Initialise le cluster Kubernetes avec kubeadm.
-    command: kubeadm init --cri-socket unix:///var/run/cri-dockerd.sock
-    when: inventory_hostname == '192.168.142.137' # Cette tâche s'exécute uniquement sur l'hôte Master.
-    tags:
-      - kubeadm_init
-
-  - name: Récupérer la commande de jointure kubeadm (Master uniquement) # Génère et récupère la commande `kubeadm join`.
-    command: kubeadm token create --print-join-command
-    delegate_to: 192.168.142.137 # Cette tâche s'exécute sur le master, même si le playbook cible "all".
-    run_once: true # S'assure que cette tâche ne s'exécute qu'une seule fois.
-    register: kubeadm_join_output_master # Enregistre la sortie sur l'hôte délégué (le master).
-    # Le 'when' n'est pas strictement nécessaire ici grâce à 'delegate_to' et 'run_once',
-    # mais peut être utile pour la clarté ou si la tâche était conditionnelle à l'hôte courant.
-
-  - name: Afficher la commande de jointure kubeadm (Master uniquement) # Affiche la sortie de la commande de jointure.
-    debug: # Affiche la sortie de la commande de jointure.
-      var: kubeadm_join_output_master.stdout
-    when: inventory_hostname == '192.168.142.137' # Exécute cette tâche uniquement sur le master.
-
-  - name: Faire joindre les Workers au cluster Kubernetes # Exécute la commande de jointure sur les workers.
-    command: "{{ hostvars['192.168.142.137'].kubeadm_join_output_master.stdout | regex_replace('\\n$', '') }} --cri-socket unix:///var/run/cri-dockerd.sock"
-    when: inventory_hostname != '192.168.142.137' # Exécute cette tâche sur tous les hôtes sauf le master.
-    register: kubeadm_join_output_workers # Enregistre la sortie sur les workers.
-    tags:
-      - kubeadm_join_workers
-
-############################################################
-# Nouvelle section : Configuration de kubectl sur le nœud maître
-############################################################
-
-  - name: Créer le répertoire .kube et copier le fichier admin.conf (Master uniquement)
-    ansible.builtin.shell: |
-      mkdir -p $HOME/.kube
-      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-      sudo chown $(id -u):$(id -g) $HOME/.kube/config
-    args:
-      creates: "{{ ansible_env.HOME }}/.kube/config"
-
-############################################################
-# Nouvelle section : Copie du fichier admin.conf vers les nœuds workers
-############################################################
-
-- name: Copier le fichier admin.conf vers les noeuds distants
-  hosts: workers
-  become: true  # Si tu as besoin des droits root pour écrire dans /etc/kubernetes
+- name: Initialiser le master Kubernetes
+  hosts: 192.168.142.137
+  become: true
   tasks:
-    - name: Copier admin.conf depuis la machine de contrôle
-      copy:
-        src: /etc/kubernetes/admin.conf  # sur la machine de contrôle (137)
-        dest: /etc/kubernetes/admin.conf  # sur les machines distantes (143, 144)
+    - name: Initialiser le cluster avec kubeadm
+      command: kubeadm init --cri-socket unix:///var/run/cri-dockerd.sock
+      tags: [kubeadm_init]
 
-############################################################
-# Nouvelle section : Application de Flannel CNI
-############################################################
+    - name: Créer .kube/config pour l'utilisateur val_master
+      shell: |
+        mkdir -p /home/val_master/.kube
+        cp -i /etc/kubernetes/admin.conf /home/val_master/.kube/config
+        chown val_master:val_master /home/val_master/.kube/config
 
-- name: Copier le fichier admin.conf vers les noeuds distants
-  hosts: master
-  become: true  # Si tu as besoin des droits root pour écrire dans /etc/kubernetes
-  tasks:
     - name: Appliquer le manifeste Flannel CNI
-      ansible.builtin.command: kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+      command: kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
- 
+
+############################################################
+# 3. Récupération de la commande de jointure
+############################################################
+- name: Obtenir la commande de jointure
+  hosts: 192.168.142.137
+  become: true
+  tasks:
+    - name: Générer la commande kubeadm join
+      command: kubeadm token create --print-join-command
+      register: join_command
+      run_once: true
+
+    - name: Sauvegarder la commande dans un fact partagé
+      set_fact:
+        kube_join_cmd: "{{ join_command.stdout }} --cri-socket unix:///var/run/cri-dockerd.sock"
+      run_once: true
+
+
+############################################################
+# 4. Faire joindre les workers au cluster
+############################################################
+- name: Faire rejoindre les workers au cluster Kubernetes
+  hosts: all
+  become: true
+  tasks:
+    - name: Joindre les workers (sauf master)
+      command: "{{ hostvars['192.168.142.137'].kube_join_cmd }}"
+      when: inventory_hostname != '192.168.142.137'
+      register: kubeadm_join_output_workers
+      tags: [kubeadm_join_workers]
+
+
+############################################################
+# 5. Configuration de .kube/config sur les workers (facultatif)
+############################################################
+- name: Configurer kubectl sur les workers (facultatif)
+  hosts: workers
+  become: true
+  tasks:
+    - name: Créer .kube/config pour chaque utilisateur
+      shell: |
+        mkdir -p /home/{{ ansible_user }}/.kube
+        cp -i /etc/kubernetes/admin.conf /home/{{ ansible_user }}/.kube/config
+        chown {{ ansible_user }}:{{ ansible_user }} /home/{{ ansible_user }}/.kube/config
+
+
+############################################################
+# (Facultatif) Copier admin.conf depuis le master si nécessaire
+############################################################
+- name: Copier admin.conf sur les workers depuis localhost (optionnel)
+  hosts: workers
+  become: true
+  tasks:
+    - name: Rendre admin.conf lisible en local
+      file:
+        path: /etc/kubernetes/admin.conf
+        mode: '0644'
+        owner: root
+        group: root
+      delegate_to: localhost
+      run_once: true
+
+    - name: Copier admin.conf sur les workers
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /etc/kubernetes/admin.conf
+        owner: root
+        group: root
+        mode: '0644'
