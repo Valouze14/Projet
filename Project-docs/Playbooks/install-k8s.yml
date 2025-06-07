@@ -64,7 +64,7 @@
   become: true
   tasks:
     - name: Initialiser le cluster avec kubeadm
-      command: kubeadm init --cri-socket unix:///var/run/cri-dockerd.sock
+      command: kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket unix:///var/run/cri-dockerd.sock
       tags: [kubeadm_init]
 
     - name: Créer .kube/config pour l'utilisateur val_master
@@ -92,7 +92,7 @@
 
     - name: Sauvegarder la commande dans un fact partagé
       set_fact:
-        kube_join_cmd: "{{ join_command.stdout }} --pod-network-cidr=10.244.0.0/16 --cri-socket unix:///var/run/cri-dockerd.sock"
+        kube_join_cmd: "{{ join_command.stdout }} --cri-socket unix:///var/run/cri-dockerd.sock"
       run_once: true
 
 
