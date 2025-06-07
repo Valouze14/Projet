@@ -139,7 +139,7 @@
 ############################################################
 - name: Configurer kubectl sur les workers (facultatif)
   hosts: workers
-  become: false
+  become: true
   tasks:
     - name: Créer le répertoire .kube et copier le fichier admin.conf (Master uniquement)
       ansible.builtin.shell: |
