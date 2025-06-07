@@ -74,8 +74,8 @@
         chown val_master:val_master /home/val_master/.kube/config
 
     - name: Appliquer le manifeste Flannel CNI
-      command: kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
-
+      ansible.builtin.shell:
+        kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 ############################################################
 # 3. Récupération de la commande de jointure
@@ -110,20 +110,6 @@
 
 
 ############################################################
-# 5. Configuration de .kube/config sur les workers (facultatif)
-############################################################
-- name: Configurer kubectl sur les workers (facultatif)
-  hosts: workers
-  become: true
-  tasks:
-    - name: Créer .kube/config pour chaque utilisateur
-      shell: |
-        mkdir -p /home/{{ ansible_user }}/.kube
-        cp -i /etc/kubernetes/admin.conf /home/{{ ansible_user }}/.kube/config
-        chown {{ ansible_user }}:{{ ansible_user }} /home/{{ ansible_user }}/.kube/config
-
-
-############################################################
 # (Facultatif) Copier admin.conf depuis le master si nécessaire
 ############################################################
 - name: Copier admin.conf sur les workers depuis localhost (optionnel)
@@ -146,3 +132,25 @@
         owner: root
         group: root
         mode: '0644'
+
+
+############################################################
+# 5. Configuration de .kube/config sur les workers (facultatif)
+############################################################
+- name: Configurer kubectl sur les workers (facultatif)
+  hosts: workers
+  become: true
+  tasks:
+    - name: Créer le répertoire .kube et copier le fichier admin.conf (Master uniquement)
+      ansible.builtin.shell:
+        mkdir -p /home/val_worker1/.kube
+        sudo cp -i /etc/kubernetes/admin.conf /home/val_worker1/.kube/config
+        sudo chown val_worker1:val_worker1 /home/val_worker1/.kube/config
+      when: inventory_hostname == '192.168.142.144'
+
+    - name: Créer le répertoire .kube et copier le fichier admin.conf (Master uniquement)
+      ansible.builtin.shell:
+        mkdir -p /home/val_worker2/.kube
+        sudo cp -i /etc/kubernetes/admin.conf /home/val_worker2/.kube/config
+        sudo chown val_worker2:val_worker2 /home/val_worker2/.kube/config
+      when: inventory_hostname == '192.168.142.143'
