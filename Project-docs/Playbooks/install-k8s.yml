@@ -76,6 +76,7 @@
     - name: Appliquer le manifeste Flannel CNI
       ansible.builtin.shell:
         kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+      become: false
 
 ############################################################
 # 3. Récupération de la commande de jointure
@@ -133,13 +134,12 @@
         group: root
         mode: '0644'
 
-
 ############################################################
 # 5. Configuration de .kube/config sur les workers (facultatif)
 ############################################################
 - name: Configurer kubectl sur les workers (facultatif)
   hosts: workers
-  become: true
+  become: false
   tasks:
     - name: Créer le répertoire .kube et copier le fichier admin.conf (Master uniquement)
       ansible.builtin.shell:
