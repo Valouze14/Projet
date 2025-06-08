@@ -4,20 +4,16 @@ metadata:
   name: site-doc-service # Nom du service, distinct de celui du pod
 spec:
   selector:
-    # Pour que le service trouve votre pod 'my-pod',
-    # il faut que 'my-pod' ait un label correspondant à ce sélecteur.
-    # Si votre pod n'a pas de labels, vous pouvez l'ajouter ou utiliser un Deployment.
-    # Supposons un label 'app: site-doc'.
     app: site-doc
   type: NodePort
   ports:
     - name: http
       protocol: TCP
-      port: 80 # Le port sur lequel le service écoutera à l'intérieur du cluster
-      targetPort: 80 # Le port sur lequel votre application écoute à l'intérieur du pod (port 80 de votre conteneur)
+      port: 8080 # Le port sur lequel le service écoutera à l'intérieur du cluster
+      targetPort: 8080 # Le port sur lequel votre application écoute à l'intérieur du pod (port 80 de votre conteneur)
       nodePort: 30080 # Un port entre 30000 et 32767. Choisissez-en un disponible.
     - name: https
       protocol: TCP
-      port: 443 # Le port sur lequel le service écoutera à l'intérieur du cluster pour HTTPS
-      targetPort: 443 # Le port sur lequel votre application écoute à l'intérieur du pod (port 443 de votre conteneur)
+      port: 4443 # Le port sur lequel le service écoutera à l'intérieur du cluster pour HTTPS
+      targetPort: 4443 # Le port sur lequel votre application écoute à l'intérieur du pod (port 443 de votre conteneur)
       nodePort: 30443 # Un autre port disponible pour HTTPS, par exemple 30443
