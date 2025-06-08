@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: site-doc-deployment
+spec:
+  replicas: 1 # Ou plus, selon vos besoins
+  selector:
+    matchLabels:
+      app: site-doc
+  template:
+    metadata:
+      labels:
+        app: site-doc # Ce label est crucial pour que le service le trouve
+    spec:
+      containers:
+      - name: site
+        image: valouze14/valouze14:latest
+        ports:
+        - containerPort: 80
+        - containerPort: 443
