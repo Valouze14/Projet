@@ -375,6 +375,55 @@ ansible-playbook Projet/Project-docs/Playbooks/All.yml -i Projet/Ansible/hosts.i
 
 🧭 **Mise en place de la supervision du cluster & conteneurs** : 
 
+
+```bash
+kubectl create configmap prometheus-config --from-file=prometheus.yml
+
+Install Cadvisor sur les workers
+
+kubctl apply -f prome,ggraphana 
+
+### 5. Ajouter Prometheus comme source de données
+
+1. Dans Grafana, clique sur **"Gear (⚙️) > Data Sources"**
+    
+2. Clique sur **"Add data source"**
+    
+3. Choisis **"Prometheus"**
+    
+4. Dans **URL**, mets :
+    
+    pgsql
+    
+    CopierModifier
+    
+    `http://prometheus-service.default.svc.cluster.local:9090`
+    
+5. Clique sur **"Save & Test"** → ça doit être **"Data source is working"**
+    
+
+---
+
+### 📊 6. Importer un Dashboard cAdvisor (facultatif mais recommandé)
+
+1. Dans Grafana, clique sur le **"+" > Import**
+    
+2. Entre cet ID de dashboard public :
+    
+    CopierModifier
+    
+    `14282`
+    
+    → c’est un dashboard cAdvisor Prometheus prêt à l’emploi
+    
+3. Clique sur **"Load"**
+    
+4. Choisis la **Prometheus data source** créée, puis clique **"Import"**
+    
+
+🎉 Tu verras maintenant un dashboard avec CPU, mémoire, conteneurs, etc.
+```
+
 ---
 
 ### 🔹 Étapes 2 : Création des playbooks Ansible pour automatiser l’installation et la configuration
