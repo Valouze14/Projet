@@ -1,0 +1,18 @@
+# prometheus-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+
+    scrape_configs:
+      - job_name: 'cadvisor-worker1'
+        static_configs:
+          - targets: ['<192.168.142.144>:8080']
+
+      - job_name: 'cadvisor-worker2'
+        static_configs:
+          - targets: ['<192.168.142.143>:8080']
