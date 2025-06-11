@@ -3,18 +3,18 @@ kind: Deployment
 metadata:
   name: site-doc-deployment
 spec:
-  replicas: 1 # Ou plus, selon vos besoins
+  replicas: 1
   selector:
     matchLabels:
       app: site-doc
   template:
     metadata:
       labels:
-        app: site-doc # Ce label est crucial pour que le service le trouve
+        app: site-doc
     spec:
       containers:
       - name: site
         image: valouze14/valouze14:latest
         ports:
-        - containerPort: 80
-        - containerPort: 443
+        - containerPort: 8090
+        - containerPort: 4443

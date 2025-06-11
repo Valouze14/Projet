@@ -1,4 +1,5 @@
 global:
+  # How frequently to scrape targets by default.
   scrape_interval: 15s
 
 scrape_configs:
@@ -9,4 +10,6 @@ scrape_configs:
   - job_name: 'cadvisor-worker2'
     static_configs:
       - targets: ['192.168.142.143:8080']
-
+  - job_name: 'kube-metrics'
+    static_configs:
+      - targets: ['192.168.142.137:30000']
