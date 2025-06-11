@@ -17,6 +17,6 @@ spec:
   - name: telemetry
     port: 8081
     targetPort: telemetry
-    nodePort: 30000 # Optionnel : Spécifie un port fixe sur les nœuds.
+    nodePort: 30001 # Optionnel : Spécifie un port fixe sur les nœuds.
   selector:
     app.kubernetes.io/name: kube-state-metrics

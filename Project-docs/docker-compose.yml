@@ -3,6 +3,6 @@ services:
   static-app:
     build: .
     ports:
-      - "8080:8080"
-      - "4443:4443"
+      - "80:80"
+      - "443:443"
     restart: always

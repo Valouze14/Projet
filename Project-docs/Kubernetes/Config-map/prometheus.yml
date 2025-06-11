@@ -10,6 +10,12 @@ scrape_configs:
   - job_name: 'cadvisor-worker2'
     static_configs:
       - targets: ['192.168.142.143:8080']
-  - job_name: 'kube-metrics'
+  - job_name: k8s-kube-state-metrics-cluster
+    honor_timestamps: true
+    metrics_path: /metrics
+    scheme: http
     static_configs:
       - targets: ['192.168.142.137:30000']
+    metric_relabel_configs:
+    - target_label: cluster
+      replacement: YourDefinedK8scluster

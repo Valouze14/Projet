@@ -285,10 +285,11 @@ services:
 
 🧪 **Déploiement local avec Docker Compose** :
 ```bash
-docker compose --project-directory  .\Project-docs\ up --build
+docker compose up --build
 ```
 
-https://mon-site-local.test
+http://mon-site-local.test:80
+https://mon-site-local.test:443
 
 ![[Pasted image 20250604214223.png]]
 
@@ -425,6 +426,19 @@ kubctl apply -f prome,ggraphana
 ```
 
 ---
+
+```bash
+docker run -d \
+  --name=cadvisor \
+  --restart=unless-stopped \
+  --volume=/:/rootfs:ro \
+  --volume=/var/run:/var/run:ro \
+  --volume=/sys:/sys:ro \
+  --volume=/var/lib/docker/:/var/lib/docker:ro \
+  -p 8080:8080 \
+  gcr.io/cadvisor/cadvisor
+
+```
 
 ### 🔹 Étapes 2 : Création des playbooks Ansible pour automatiser l’installation et la configuration
 
