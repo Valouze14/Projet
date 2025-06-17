@@ -11,6 +11,18 @@
             "id": "3079e40a3b9d0257",
             "type": "leaf",
             "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "Excalidraw/Drawing 2025-06-11 14.26.16.excalidraw.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "Drawing 2025-06-11 14.26.16.excalidraw"
+            }
+          },
+          {
+            "id": "d5cb2716307a2968",
+            "type": "leaf",
+            "state": {
               "type": "markdown",
               "state": {
                 "file": "Rapport.md",
@@ -21,7 +33,8 @@
               "title": "Rapport"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -61,7 +74,7 @@
                 "sortOrder": "alphabetical"
               },
               "icon": "lucide-search",
-              "title": "Search"
+              "title": "Rechercher"
             }
           },
           {
@@ -161,20 +174,20 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "switcher:Open quick switcher": false,
-      "graph:Open graph view": false,
-      "canvas:Create new canvas": false,
-      "daily-notes:Open today's daily note": false,
-      "templates:Insert template": false,
-      "command-palette:Open command palette": false,
+      "switcher:Ouvrir le sélecteur rapide": false,
+      "graph:Ouvrir la vue graphique": false,
+      "canvas:Créer une nouvelle toile": false,
+      "daily-notes:Ouvrir la note quotidienne": false,
+      "templates:Insérer le modèle": false,
+      "command-palette:Ouvrir la palette de commandes": false,
       "obsidian-excalidraw-plugin:New drawing": false,
       "webpage-html-export:Export Vault to HTML": false
     }
   },
-  "active": "3079e40a3b9d0257",
+  "active": "d5cb2716307a2968",
   "lastOpenFiles": [
-    "Rapport.md",
     "Excalidraw/Drawing 2025-06-11 14.26.16.excalidraw.md",
+    "Rapport.md",
     "Rapport.pdf",
     "Pasted Image 20250611144601_143.png",
     "Pasted Image 20250611143455_879.png",

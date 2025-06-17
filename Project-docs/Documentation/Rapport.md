@@ -455,6 +455,17 @@ docker run -d \
 <div style="page-break-after: always;"></div>
 <hr class="gradient-warm">    <!-- Ligne jaune/orange -->
 
+## Axes d'améliorations
+
+<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
+
+```bash
+- Mise en place MCO, MCS ainsi que le loadbalancer demandé dans les exigences
+- Segmentation réseau des vm pour avoir un réseau dédié pour l'administration.
+- Configuration des namesspaces pour éviter de mettre dans le défault.
+- 
+```
+---
 ## Annexe 1 : ARBORESCENCE
 
  <hr class="gradient-warm">    <!-- Ligne jaune/orange -->
