@@ -9,4 +9,6 @@ spec:
     - protocol: TCP
       port: 3000
       targetPort: 3000
+      nodePort: 30500 # Port pour accéder à graphana hors du cluster
   type: NodePort
+

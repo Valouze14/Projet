@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "Rapport.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
@@ -61,7 +61,7 @@
                 "sortOrder": "alphabetical"
               },
               "icon": "lucide-search",
-              "title": "Rechercher"
+              "title": "Search"
             }
           },
           {
@@ -161,20 +161,27 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "switcher:Ouvrir le sélecteur rapide": false,
-      "graph:Ouvrir la vue graphique": false,
-      "canvas:Créer une nouvelle toile": false,
-      "daily-notes:Ouvrir la note quotidienne": false,
-      "templates:Insérer le modèle": false,
-      "command-palette:Ouvrir la palette de commandes": false
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "webpage-html-export:Export Vault to HTML": false
     }
   },
   "active": "3079e40a3b9d0257",
   "lastOpenFiles": [
+    "Rapport.md",
+    "Excalidraw/Drawing 2025-06-11 14.26.16.excalidraw.md",
+    "Rapport.pdf",
+    "Pasted Image 20250611144601_143.png",
+    "Pasted Image 20250611143455_879.png",
+    "Excalidraw",
     "Pasted image 20250604214528.png",
     "Pasted image 20250604214320.png",
     "Pasted image 20250604214223.png",
-    "Rapport.md",
     "Projet.md",
     "Notes.md",
     "Untitled.md",
@@ -188,8 +195,6 @@
     "Master/564d53fb-5c4e-96ef-38a0-102466367bcd.vmem.lck/M39169.lck",
     "Master/Worker1-cl1.vmdk.lck/M07128.lck",
     "Master/Worker1-cl1-000001.vmdk.lck/M33529.lck",
-    "Master/Worker1-cl1-000003.vmdk.lck/M47213.lck",
-    "Master/Worker1-cl1-000006.vmdk.lck/M30863.lck",
     "Pasted image 20250413190834.png",
     "Pasted image 20250413190828.png"
   ]

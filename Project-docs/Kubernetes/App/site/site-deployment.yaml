@@ -16,5 +16,5 @@ spec:
       - name: site
         image: valouze14/valouze14:latest
         ports:
-        - containerPort: 8090
-        - containerPort: 4443
+        - containerPort: 80
+        - containerPort: 443

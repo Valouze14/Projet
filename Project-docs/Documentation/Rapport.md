@@ -288,7 +288,7 @@ services:
 docker compose up --build
 ```
 
-http://mon-site-local.test:80
+https://mon-site-local.test:443
 https://mon-site-local.test:443
 
 ![[Pasted image 20250604214223.png]]

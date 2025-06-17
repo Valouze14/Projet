@@ -9,4 +9,5 @@ spec:
     - protocol: TCP
       port: 9090
       targetPort: 9090
+      nodePort: 9090 # Autre port disponible pour HTTPS, par exemple 30443
   type: NodePort
