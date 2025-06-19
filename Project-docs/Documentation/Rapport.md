@@ -362,8 +362,10 @@ kubectl apply -f /home/val_master/Documents/Projet/Project-docs/Kubernetes/App/S
 
 ✅**Test des accès au site :**
 
-https://mon-site-local.test2:30443
-http://mon-site-local.test2:30080
+https://mon-site-local2.test:30443
+http://mon-site-local2.test:30080
+
+Sur les images, le 2 est après test, il s'agit de l'ancienne url.
 
 ![[Pasted image 20250618151743.png]]
 ![[Pasted image 20250618152106.png]]
