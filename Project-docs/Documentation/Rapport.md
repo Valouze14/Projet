@@ -833,7 +833,7 @@ git clone https://github.com/Valouze14/Projet.git
 # Déployer les manifests Kubernetes de kube-metrics (exporter de métriques)
 ############################################################
     - name: Appliquer les manifestes Kubernetes pour kube-metrics
-      ansible.builtin.command: kubectl apply -k /home/val_master/Documents/Projet/Project-docs/Kubernetes/App/kube-metrics/kustomization.yaml
+      ansible.builtin.command: kubectl apply -k /home/val_master/Documents/Projet/Project-docs/Kubernetes/App/kube-metrics
 
 
 - name: Configurer kubectl sur les workers (facultatif)
