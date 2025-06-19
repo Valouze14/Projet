@@ -26,7 +26,7 @@
               "type": "markdown",
               "state": {
                 "file": "Rapport.md",
-                "mode": "preview",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
@@ -186,15 +186,21 @@
   },
   "active": "d5cb2716307a2968",
   "lastOpenFiles": [
+    "Pasted image 20250619112740.png",
+    "Pasted image 20250619110645.png",
+    "Pasted image 20250619110538.png",
+    "Pasted image 20250619110512.png",
+    "Pasted image 20250618155144.png",
+    "Pasted image 20250618155137.png",
+    "Pasted image 20250618152106.png",
+    "Pasted image 20250618151743.png",
     "Excalidraw/Drawing 2025-06-11 14.26.16.excalidraw.md",
     "Rapport.md",
+    "Pasted Image 20250611143455_879.png",
     "Rapport.pdf",
     "Pasted Image 20250611144601_143.png",
-    "Pasted Image 20250611143455_879.png",
     "Excalidraw",
     "Pasted image 20250604214528.png",
-    "Pasted image 20250604214320.png",
-    "Pasted image 20250604214223.png",
     "Projet.md",
     "Notes.md",
     "Untitled.md",
@@ -207,8 +213,6 @@
     "Master/564d53fb-5c4e-96ef-38a0-102466367bcd.vmem",
     "Master/564d53fb-5c4e-96ef-38a0-102466367bcd.vmem.lck/M39169.lck",
     "Master/Worker1-cl1.vmdk.lck/M07128.lck",
-    "Master/Worker1-cl1-000001.vmdk.lck/M33529.lck",
-    "Pasted image 20250413190834.png",
-    "Pasted image 20250413190828.png"
+    "Master/Worker1-cl1-000001.vmdk.lck/M33529.lck"
   ]
 }

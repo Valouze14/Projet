@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: site-doc-service # Nom du service, distinct de celui du pod
+  name: site-doc-service 
 spec:
   selector:
     app: site-doc
@@ -14,6 +14,6 @@ spec:
       nodePort: 30080 # Un port entre 30000 et 32767. Choisissez-en un disponible.
     - name: https
       protocol: TCP
-      port: 4443 # Le port sur lequel le service écoutera à l'intérieur du cluster pour HTTPS
-      targetPort: 443 # Le port sur lequel votre application écoute à l'intérieur du pod (port 443 de votre conteneur)
-      nodePort: 30443 # Autre port disponible pour HTTPS, par exemple 30443
+      port: 4443
+      targetPort: 443
+      nodePort: 30443

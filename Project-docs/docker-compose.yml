@@ -1,4 +1,3 @@
-
 services:
   static-app:
     build: .

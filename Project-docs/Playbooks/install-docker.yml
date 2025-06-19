@@ -1,10 +1,11 @@
-- name: Install Docker
+- name: Install Docker 
   hosts: all
   become: true
   tasks:
 
 ############################################################
-
+# Installer les paquets nécessaires au fonctionnement de Docker
+############################################################
   - name: Installer les paquets nécessaires pour Docker
     apt:
       name:
@@ -17,32 +18,33 @@
       update_cache: true
 
 ############################################################
-
+# Ajouter la clé GPG officielle de Docker pour sécuriser le dépôt
+############################################################
   - name: Ajouter la clé GPG officielle de Docker
-    shell: curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor
-      -o /usr/share/keyrings/docker-archive-keyring.gpg
+    shell: curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
     args:
       creates: /usr/share/keyrings/docker-archive-keyring.gpg
 
 ############################################################
-
+# Ajouter le dépôt officiel Docker à la liste des sources APT
+############################################################
   - name: Ajouter le dépôt Docker à la liste des sources APT
     lineinfile:
       path: /etc/apt/sources.list.d/docker.list
-      line: deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg]
-        https://download.docker.com/linux/debian {{ ansible_distribution_release }}
-        stable
+      line: deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
       create: true
       mode: '0644'
 
 ############################################################
-
+# Mettre à jour l’index des paquets après ajout du dépôt Docker
+############################################################
   - name: Mettre à jour l'index des paquets après l'ajout du dépôt Docker
     apt:
       update_cache: true
 
 ############################################################
-
+# Installer Docker Engine, l'interface en ligne de commande et containerd
+############################################################
   - name: Installer Docker Engine, CLI et Containerd
     apt:
       name:
@@ -52,7 +54,8 @@
       state: present
 
 ############################################################
-
+# Activer et démarrer le service Docker au démarrage de la machine
+############################################################
   - name: S'assurer que le service Docker est démarré et activé au démarrage
     systemd:
       name: docker
@@ -60,19 +63,22 @@
       enabled: true
 
 ############################################################
-
+# Vérifier le statut du service Docker (diagnostic uniquement)
+############################################################
   - name: Vérifier le statut du service Docker (pour information, ne modifie rien)
     command: systemctl status docker
     register: docker_status
 
 ############################################################
-
+# Afficher le statut du service Docker dans la sortie Ansible
+############################################################
   - name: Afficher le statut du service Docker
     debug:
       var: docker_status.stdout_lines
 
 ############################################################
-
+# Ajouter l'utilisateur val_master au groupe docker (accès sans sudo)
+############################################################
   - name: Ajouter val_master au groupe docker
     user:
       name: val_master
@@ -81,7 +87,8 @@
     when: inventory_hostname == '192.168.142.137'
 
 ############################################################
-
+# Ajouter l'utilisateur val_worker1 au groupe docker
+############################################################
   - name: Ajouter val_worker1 au groupe docker
     user:
       name: val_worker1
@@ -90,7 +97,8 @@
     when: inventory_hostname == '192.168.142.144'
 
 ############################################################
-
+# Ajouter l'utilisateur val_worker2 au groupe docker
+############################################################
   - name: Ajouter val_worker2 au groupe docker
     user:
       name: val_worker2
@@ -99,20 +107,23 @@
     when: inventory_hostname == '192.168.142.143'
 
 ############################################################
-
+# Vérifier que Docker fonctionne avec un conteneur de test
+############################################################
   - name: Exécuter 'docker run hello-world' pour vérifier l'installation
     command: docker run hello-world
     become: false
     register: docker_hello_world_result
 
 ############################################################
-
+# Afficher le résultat du test 'docker run hello-world'
+############################################################
   - name: Afficher le résultat de 'docker run hello-world'
     debug:
       var: docker_hello_world_result.stdout_lines
 
 ############################################################
-
+# Télécharger le binaire cri-dockerd depuis GitHub
+############################################################
   - name: Télécharger le paquet cri-dockerd
     get_url:
       url: https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.17/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
@@ -120,18 +131,17 @@
       mode: '0644'
 
 ############################################################
-
+# Installer le paquet cri-dockerd téléchargé localement
+############################################################
   - name: Installer le paquet cri-dockerd
     ansible.builtin.apt:
       deb: /tmp/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
 
 ############################################################
-# Nouvelle section : Lancer docker compose up
+# Lancer Docker Compose pour déployer les conteneurs du projet
 ############################################################
-
   - name: Lancer docker compose up avec le répertoire de projet spécifié
     ansible.builtin.command: docker compose up --build -d
     args:
       chdir: /home/val_master/Documents/Projet/Project-docs/   # Spécifie le répertoire de travail
     when: inventory_hostname == '192.168.142.137' # Exécuter uniquement sur le nœud maître
-

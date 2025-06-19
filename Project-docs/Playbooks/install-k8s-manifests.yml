@@ -1,0 +1,61 @@
+---
+- name: Déploiement des outils de monitoring et des applications Kubernetes (sans collections externes)
+  hosts: masters
+
+  tasks:
+
+############################################################
+# Créer une ConfigMap Prometheus à partir d’un fichier de configuration local
+############################################################
+    - name: Créer la ConfigMap Prometheus
+      ansible.builtin.command:
+        kubectl create configmap prometheus-config --from-file=/home/val_master/Documents/Projet/Project-docs/Kubernetes/Config-map/prometheus.yml 
+
+############################################################
+# Déployer les manifests Kubernetes de l'application web (site)
+############################################################
+    - name: Appliquer les manifestes Kubernetes pour site
+      ansible.builtin.command: kubectl apply -f /home/val_master/Documents/Projet/Project-docs/Kubernetes/App/site
+
+############################################################
+# Déployer les manifests Kubernetes de Prometheus (monitoring)
+############################################################
+    - name: Appliquer les manifestes Kubernetes pour prometheus
+      ansible.builtin.command: kubectl apply -f /home/val_master/Documents/Projet/Project-docs/Kubernetes/App/prometheus
+
+############################################################
+# Déployer les manifests Kubernetes de Grafana (dashboard)
+############################################################
+    - name: Appliquer les manifestes Kubernetes pour grafana
+      ansible.builtin.command: kubectl apply -f /home/val_master/Documents/Projet/Project-docs/Kubernetes/App/grafana
+
+############################################################
+# Déployer les manifests Kubernetes de kube-metrics (exporter de métriques)
+############################################################
+    - name: Appliquer les manifestes Kubernetes pour kube-metrics
+      ansible.builtin.command: kubectl apply -f /home/val_master/Documents/Projet/Project-docs/Kubernetes/App/kube-metrics
+
+
+- name: Configurer kubectl sur les workers (facultatif)
+  hosts: workers
+  become: true
+
+  tasks:
+
+############################################################
+# Démarrer le conteneur cAdvisor pour surveiller les performances du nœud
+############################################################
+    - name: Démarrer le conteneur cAdvisor
+      ansible.builtin.shell: |
+        docker run -d \
+          --name=cadvisor \
+          --restart=unless-stopped \
+          --volume=/:/rootfs:ro \
+          --volume=/var/run:/var/run:ro \
+          --volume=/sys:/sys:ro \
+          --volume=/var/lib/docker/:/var/lib/docker:ro \
+          -p 8080:8080 \
+          gcr.io/cadvisor/cadvisor
+        # Ajout d'une vérification pour l'idempotence (pas strictement nécessaire pour 'docker run -d' car il ne relancera pas si le conteneur existe déjà)
+      args:
+        creates: /var/run/docker/cadvisor.pid
