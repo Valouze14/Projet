@@ -17,7 +17,7 @@
 <pre><code class="language-conf">Debian 12` (recommandé) 
 </code></pre>
 <p>🛠️🔐 <strong>Installation de base avec SSH activé</strong> :</p>
-<pre><code class="language-conf">Installation par défaut avec la supression de la partition swap pour kubernetes 
+<pre><code class="language-conf">Installation par défaut avec la suppression de la partition swap pour kubernetes 
 </code></pre>
 <p><strong>SSH activé</strong> :</p>
 <pre><code class="language-bash">ssh.service - OpenBSD Secure Shell server
@@ -202,6 +202,8 @@ http://mon-site-local.test:80</p>
 <img src="Pasted image 20250604214528.png" />
 <hr>
 <h3>🔹 Étapes 4 : Création des manifests Kubernetes pour le déploiement sur le cluster</h3>
+<p>🚨🚨🚨  <strong>Schéma de l'architecture logiciel :</strong></p>
+<img src="Pasted image 20250620000359.png" />
 <p>🐳 **Push de l'image docker issue du <code>Dockerfile</code> de l'étape 1 sur docker hub afin de pouvoir l'utiliser directement dans les pods.</p>
 <p>📜 <strong>Création du  deployment<code>site-deployment.yaml</code></strong> :</p>
 <pre><code class="language-bash">apiVersion: apps/v1
@@ -257,7 +259,7 @@ http://mon-site-local.test2:30080</p>
 <img src="Pasted image 20250618151743.png" />
 <img src="Pasted image 20250618152106.png" />
 <p>✅Vérification load balancer :**</p>
-<p>Par défaut, le service distribue sans affinité aux pods associés ce qui fait un load-balancer naturel, je peux vérifier en regardant en direct les logs des trois poids qui héberge mon site. A chaque fois, il faut supprimer les données dans le cache pour établir une nouvelle session. Je constate qu'à chaque nouvelle session, les requêtes n'arrivent jamais sur le même pod.</p>
+<p>Par défaut, le service distribue sans affinité aux pods associés ce qui fait un load-balancer naturel, je peux vérifier en regardant en direct les logs des trois pods qui héberge mon site. A chaque fois, il faut supprimer les données dans le cache pour établir une nouvelle session. Je constate qu'à chaque nouvelle session, les requêtes n'arrivent jamais sur le même pod.</p>
 <pre><code class="language-bash">kubectl logs -f site-doc-deployment-7887cccc5b-mp5vt
 </code></pre>
 <p><img src="Pasted image 20250619112740.png" /></p>
@@ -857,7 +859,7 @@ spec:
 <p>📦 https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard</p>
 <p>✅ **Vérification de la configuration de <code>prometheus</code> :
 <img src="Pasted image 20250619110512.png" />
-✅ **Vérification de la supervision avec <code>graphana</code> :</p>
+✅ **Vérification de la supervision avec <code>grafana</code> :</p>
 <p>ID template utilisé pour la supervision du cluster Kubernetes : 13332</p>
 <img src="Pasted image 20250619110538.png" />
 <p>ID template utilisé pour la supervision les conteneurs : 14282</p>
@@ -893,10 +895,16 @@ spec:
 <hr class="gradient-warm">
 <h2>Axes d'améliorations</h2>
 <hr class="gradient-warm">
-<pre><code class="language-bash">- Segmentation réseau des vm pour avoir un réseau dédié pour l'administration.
-- Configuration des namesspaces pour éviter de mettre dans le défault.
-- 
+<pre><code class="language-bash">- Gestion de log avec promtail et loki (pas réussi à faire fonctionner loki)
+- Segmentation réseau des vm pour avoir un réseau dédié pour l'administration.
+- Configuration des namespaces pour éviter de mettre dans le défault.
+- Affiner les différents éléments configurés tout au long du projet.
+
+
+🚨🚨🚨 Ajout d'une page HTML affichant directement le rapport (fait à la toute fin)
 </code></pre>
+<img src="Pasted image 20250620000020.png" />
+<img src="Pasted image 20250620000004.png" />
 <hr>
 <h2>Annexe 1 : ARBORESCENCE</h2>
 <hr class="gradient-warm">

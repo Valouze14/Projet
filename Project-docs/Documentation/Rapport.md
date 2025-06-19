@@ -13,7 +13,7 @@ Debian 12` (recommandé)
 ``` 
 🛠️🔐 **Installation de base avec SSH activé** : 
 ```conf
-Installation par défaut avec la supression de la partition swap pour kubernetes 
+Installation par défaut avec la suppression de la partition swap pour kubernetes 
 ```
  **SSH activé** :
 
@@ -294,6 +294,10 @@ http://mon-site-local.test:80
 
 ### 🔹 Étapes 4 : Création des manifests Kubernetes pour le déploiement sur le cluster
 
+🚨🚨🚨  **Schéma de l'architecture logiciel :**
+
+![[Pasted image 20250620000359.png]]
+
 🐳 **Push de l'image docker issue du `Dockerfile` de l'étape 1 sur docker hub afin de pouvoir l'utiliser directement dans les pods.
 
 📜 **Création du  deployment`site-deployment.yaml`** :
@@ -364,7 +368,7 @@ http://mon-site-local.test2:30080
 
 ✅Vérification load balancer :**
 
-Par défaut, le service distribue sans affinité aux pods associés ce qui fait un load-balancer naturel, je peux vérifier en regardant en direct les logs des trois poids qui héberge mon site. A chaque fois, il faut supprimer les données dans le cache pour établir une nouvelle session. Je constate qu'à chaque nouvelle session, les requêtes n'arrivent jamais sur le même pod.
+Par défaut, le service distribue sans affinité aux pods associés ce qui fait un load-balancer naturel, je peux vérifier en regardant en direct les logs des trois pods qui héberge mon site. A chaque fois, il faut supprimer les données dans le cache pour établir une nouvelle session. Je constate qu'à chaque nouvelle session, les requêtes n'arrivent jamais sur le même pod.
 
 ```bash
 kubectl logs -f site-doc-deployment-7887cccc5b-mp5vt
@@ -1028,7 +1032,7 @@ docker run -d \
 
 ✅ **Vérification de la configuration de `prometheus` :
 ![[Pasted image 20250619110512.png]]
-✅ **Vérification de la supervision avec `graphana` :
+✅ **Vérification de la supervision avec `grafana` :
 
 ID template utilisé pour la supervision du cluster Kubernetes : 13332
 
@@ -1082,17 +1086,106 @@ ID template utilisé pour la supervision les conteneurs : 14282
 <hr class="gradient-warm">    <!-- Ligne jaune/orange -->
 
 ```bash
-- Segmentation réseau des vm pour avoir un réseau dédié pour l'administration.
-- Configuration des namesspaces pour éviter de mettre dans le défault.
 - Gestion de log avec promtail et loki (pas réussi à faire fonctionner loki)
+- Segmentation réseau des vm pour avoir un réseau dédié pour l'administration.
+- Configuration des namespaces pour éviter de mettre dans le défault.
+- Affiner les différents éléments configurés tout au long du projet.
+
+
+🚨🚨🚨 Ajout d'une page HTML affichant directement le rapport directement (fait à la toute fin)
 ```
+![[Pasted image 20250620000020.png]]
+![[Pasted image 20250620000004.png]]
 ---
 ## Annexe 1 : ARBORESCENCE
 
  <hr class="gradient-warm">    <!-- Ligne jaune/orange -->
 
 ```bash
-
+.
+└── Projet
+    ├── Ansible
+    │   └── hosts.ini
+    ├── Project-docs
+    │   ├── Config
+    │   │   └── nginx
+    │   │       ├── certs
+    │   │       │   ├── server.crt
+    │   │       │   └── server.key
+    │   │       └── conf
+    │   │           └── default.conf
+    │   ├── docker-compose.yml
+    │   ├── Dockerfile
+    │   ├── Documentation
+    │   │   ├── Excalidraw
+    │   │   │   └── Drawing 2025-06-11 14.26.16.excalidraw.md
+    │   │   ├── Pasted image 20250604214223.png
+    │   │   ├── Pasted image 20250604214320.png
+    │   │   ├── Pasted image 20250604214528.png
+    │   │   ├── Pasted Image 20250611143455_879.png
+    │   │   ├── Pasted Image 20250611144601_143.png
+    │   │   ├── Pasted image 20250618151743.png
+    │   │   ├── Pasted image 20250618152106.png
+    │   │   ├── Pasted image 20250618155137.png
+    │   │   ├── Pasted image 20250618155144.png
+    │   │   ├── Pasted image 20250619110512.png
+    │   │   ├── Pasted image 20250619110538.png
+    │   │   ├── Pasted image 20250619110645.png
+    │   │   ├── Pasted image 20250619112740.png
+    │   │   ├── Rapport.md
+    │   │   └── Rapport.pdf
+    │   ├── Kubernetes
+    │   │   ├── App
+    │   │   │   ├── grafana
+    │   │   │   │   ├── grafana-deployment.yaml
+    │   │   │   │   └── grafana-service.yaml
+    │   │   │   ├── kube-metrics
+    │   │   │   │   ├── cluster-role-binding.yaml
+    │   │   │   │   ├── cluster-role.yaml
+    │   │   │   │   ├── deployment.yaml
+    │   │   │   │   ├── kustomization.yaml
+    │   │   │   │   ├── metric-service.yaml
+    │   │   │   │   └── service-account.yaml
+    │   │   │   ├── prometheus
+    │   │   │   │   ├── prometheus-deployment.yaml
+    │   │   │   │   └── prometheus-service.yaml
+    │   │   │   └── site
+    │   │   │       ├── site-deployment.yaml
+    │   │   │       └── site-service.yaml
+    │   │   └── Config-map
+    │   │       └── prometheus.yml
+    │   ├── Playbooks
+    │   │   ├── All.yml
+    │   │   ├── install-docker.yml
+    │   │   ├── install-k8s-manifests.yml
+    │   │   ├── install-k8s.yml
+    │   │   ├── mco.yaml
+    │   │   ├── old
+    │   │   │   └── All.yml
+    │   │   └── setup-hosts.yml
+    │   └── Website_content
+    │       ├── index.html
+    │       ├── page
+    │       │   ├── Dark PDF export.css
+    │       │   ├── page.html
+    │       │   ├── Pasted image 20250604214223.png
+    │       │   ├── Pasted image 20250604214320.png
+    │       │   ├── Pasted image 20250604214528.png
+    │       │   ├── Pasted Image 20250611143455_879.png
+    │       │   ├── Pasted Image 20250611144601_143.png
+    │       │   ├── Pasted image 20250618151743.png
+    │       │   ├── Pasted image 20250618152106.png
+    │       │   ├── Pasted image 20250618155137.png
+    │       │   ├── Pasted image 20250618155144.png
+    │       │   ├── Pasted image 20250619110512.png
+    │       │   ├── Pasted image 20250619110538.png
+    │       │   ├── Pasted image 20250619110645.png
+    │       │   ├── Pasted image 20250619112740.png
+    │       │   └── supercharged-links-gen.css
+    │       ├── rapport.pdf
+    │       ├── script.js
+    │       └── style.css
+    └── SMB111- Projet - 2024 - 2025.docx.pdf
 
 ```
 
