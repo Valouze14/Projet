@@ -1042,8 +1042,33 @@ ID template utilisé pour la supervision les conteneurs : 14282
 
 🔁 **Automatisation des MAJ avec Ansible** : 
 
+📜 **Création du playbook mco.yaml**
 
+```bash
+---
+- name: MCO
+  hosts: all
+  become: true
 
+  tasks:
+    - name: Mettre à jour les paquets et nettoyer le cache (Debian/Ubuntu)
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+        autoclean: yes
+        autoremove: yes
+      register: apt_update_result
+
+    - name: Redémarrer si le noyau a été mis à jour et si nécessaire (Debian/Ubuntu)
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+      when:
+        - apt_update_result.reboot_required is defined and apt_update_result.reboot_required
+
+    - name: Nettoyer les fichiers temporaires dans /tmp (tous les OS)
+      ansible.builtin.command: find /tmp -type f -atime +1 -delete
+      changed_when: false
+```
 
 
 <div style="page-break-after: always;"></div>
