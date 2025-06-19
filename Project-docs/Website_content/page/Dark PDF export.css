@@ -1,0 +1,33 @@
+/* dark-mode-base.css */
+
+/* Définition des variables de couleurs pour un thème sombre */
+:root {
+    --color-base-00: #1e1e1e; /* Le plus sombre, souvent pour le fond */
+    --color-base-10: #242424;
+    --color-base-20: #262626;
+    --color-base-25: #2a2a2a;
+    --color-base-30: #363636;
+    --color-base-35: #3F3F3F;
+    --color-base-40: #555;
+    --color-base-50: #666;
+    --color-base-60: #999;
+    --color-base-70: #bababa;
+    --color-base-100: #dadada; /* Le plus clair, souvent pour le texte */
+}
+
+/* Application des couleurs de base au corps du document */
+body {
+    background-color: var(--color-base-00);
+    color: var(--color-base-100);
+    font-family: Arial, sans-serif;
+    padding: 5%;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5); /* Correction: il manquait un point-virgule ici */
+
+    /* Permet de centrer les éléments display: inline-block comme les titres avec gradient */
+}
+html {
+    background-color: #363638;
+    /* Supprimez ou commentez les lignes suivantes pour éviter les marges excessives */
+     margin-left: 17%;
+     margin-right: 17%;
+}

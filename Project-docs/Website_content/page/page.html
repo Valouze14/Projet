@@ -1,171 +1,120 @@
-# Déploiement Automatisé d'un Site de Documentation avec MCO/MCS
-
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-## Phase 1 : Préparation des Machines                      
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-### 🔹 Étape 1 : Installation de l'OS
-
-✅ **Choix de l'OS (Ubuntu/Debian recommandé)** : 
-```conf
-Debian 12` (recommandé) 
-``` 
-🛠️🔐 **Installation de base avec SSH activé** : 
-```conf
-Installation par défaut avec la supression de la partition swap pour kubernetes 
-```
- **SSH activé** :
-
-```bash
-ssh.service - OpenBSD Secure Shell server
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Page Web</title>
+    <link rel="stylesheet" href="Dark PDF export.css">
+	<link rel="stylesheet" href="supercharged-links-gen.css">
+</head>
+<body>
+<h1>Déploiement Automatisé d'un Site de Documentation avec MCO/MCS</h1>
+<hr class="gradient-warm">
+<h2>Phase 1 : Préparation des Machines</h2>
+<hr class="gradient-warm">
+<h3>🔹 Étape 1 : Installation de l'OS</h3>
+<p>✅ <strong>Choix de l'OS (Ubuntu/Debian recommandé)</strong> :</p>
+<pre><code class="language-conf">Debian 12` (recommandé) 
+</code></pre>
+<p>🛠️🔐 <strong>Installation de base avec SSH activé</strong> :</p>
+<pre><code class="language-conf">Installation par défaut avec la supression de la partition swap pour kubernetes 
+</code></pre>
+<p><strong>SSH activé</strong> :</p>
+<pre><code class="language-bash">ssh.service - OpenBSD Secure Shell server
 Loaded: loaded (/lib/systemd/system/ssh.service; enabled)
 Active: active (running) since Tue 2025-04-15 09:29:13 CEST; 5min ago
-```
-
-📦 **Mise à jour des paquets** :
-```bash
-apt-get update
+</code></pre>
+<p>📦 <strong>Mise à jour des paquets</strong> :</p>
+<pre><code class="language-bash">apt-get update
 apt-get upgrade
-```
-
----
-<div style="page-break-after: always;"></div>
-
-### 🔹 Étape 2 : Configuration initiale des machines
-
-👥 **Configuration du PATH (commandes manquantes)** :
-```bash
-export PATH=$PATH:/usr/sbin #Ajout de ce dossier au path pour avoir des commandes nécessaire à la suite du projet
-```
-
-👥 **Ajout des utilisateurs** :
-```bash
-adduser val_master       # VM Master
+</code></pre>
+<hr>
+<h3>🔹 Étape 2 : Configuration initiale des machines</h3>
+<p>👥 <strong>Configuration du PATH (commandes manquantes)</strong> :</p>
+<pre><code class="language-bash">export PATH=$PATH:/usr/sbin #Ajout de ce dossier au path pour avoir des commandes nécessaire à la suite du projet
+</code></pre>
+<p>👥 <strong>Ajout des utilisateurs</strong> :</p>
+<pre><code class="language-bash">adduser val_master       # VM Master
 adduser val_worker1      # VM Worker Node 1
 adduser val_worker2      # VM Worker Node 2
-```
-
-👥 **Ajout des utilisateurs au groupe sudo** :
-```bash
-usermod -aG sudo val_master      # VM Master
+</code></pre>
+<p>👥 <strong>Ajout des utilisateurs au groupe sudo</strong> :</p>
+<pre><code class="language-bash">usermod -aG sudo val_master      # VM Master
 usermod -aG sudo val_worker1     # VM Worker Node 1
 usermod -aG sudo val_worker2      # VM Worker Node 2
-```
-
-🌐 **Configuration réseau & hostnames** :
-```bash
-hostnamectl set-hostname Master     #VM Master
+</code></pre>
+<p>🌐 <strong>Configuration réseau &amp; hostnames</strong> :</p>
+<pre><code class="language-bash">hostnamectl set-hostname Master     #VM Master
 hostnamectl set-hostname Worker1    #VM Worker Node 1
 hostnamectl set-hostname Worker2    #VM Worker Node 2
-```
-
-🔐 **Génération de clé SSH + copie** :
-```bash
-ssh-keygen -t rsa -b 4096   # Avec passphrase "valentin"
+</code></pre>
+<p>🔐 <strong>Génération de clé SSH + copie</strong> :</p>
+<pre><code class="language-bash">ssh-keygen -t rsa -b 4096   # Avec passphrase &quot;valentin&quot;
 
 ssh-copy-id val_worker1@192.168.142.144
 ssh-copy-id val_worker2@192.168.142.143
 ssh-copy-id val_master@192.168.142.137
-```
-
-🧾 **Résolution de nom** (`/etc/hosts`) :
-```bash
-192.168.142.137 Master
+</code></pre>
+<p>🧾 <strong>Résolution de nom</strong> (<code>/etc/hosts</code>) :</p>
+<pre><code class="language-bash">192.168.142.137 Master
 192.168.142.144 Worker1
 192.168.142.143 Worker2
-```
-
-<div style="page-break-after: always;"></div>
-
-🧾 **Fichier de configuration SSH ** (`/etc/ssh/sshd_config`) :
-```bash
-PubKeyAuthentication yes
+</code></pre>
+<p>🧾 **Fichier de configuration SSH ** (<code>/etc/ssh/sshd_config</code>) :</p>
+<pre><code class="language-bash">PubKeyAuthentication yes
 PermitRootLogin no
 PasswordAuthentication no
-```
-
-🧪 **Vérification SSH sans mot de passe via des clés publiques** :
-```bash
-ssh val_worker1@192.168.142.142
+</code></pre>
+<p>🧪 <strong>Vérification SSH sans mot de passe via des clés publiques</strong> :</p>
+<pre><code class="language-bash">ssh val_worker1@192.168.142.142
 # ➜ Enter passphrase...
 
 ssh root@192.168.142.142
 # ➜ Permission denied (clé requise)
-```
-
----
-
-### 🔹 Étape 3 : Installation des prérequis
-
-🐍 **Installation de python ** :
-```bash
-sudo apt install python3 python3-pip
-```
-
-✅ **Vérification de la connectivité entre les machines** :
-```bash
-val_master# ping 192.168.142.144
+</code></pre>
+<hr>
+<h3>🔹 Étape 3 : Installation des prérequis</h3>
+<p>🐍 **Installation de python ** :</p>
+<pre><code class="language-bash">sudo apt install python3 python3-pip
+</code></pre>
+<p>✅ <strong>Vérification de la connectivité entre les machines</strong> :</p>
+<pre><code class="language-bash">val_master# ping 192.168.142.144
 val_master# ping 192.168.142.143
-```
----
-<div style="page-break-after: always;"></div>
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-## Phase 2 : Installation & Configuration de Docker
-
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-### 🔹 Étape 1 : Installation de Docker
-
-📚 [Guide IT-Connect Docker Debian](https://www.it-connect.fr/installation-pas-a-pas-de-docker-sur-debian-11/)
-
-```bash
-sudo apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+</code></pre>
+<hr>
+<hr class="gradient-warm">
+<h2>Phase 2 : Installation &amp; Configuration de Docker</h2>
+<p><hr class="gradient-warm">    <!-- Ligne jaune/orange --></p>
+<h3>🔹 Étape 1 : Installation de Docker</h3>
+<p>📚 <a href="https://www.it-connect.fr/installation-pas-a-pas-de-docker-sur-debian-11/">Guide IT-Connect Docker Debian</a></p>
+<pre><code class="language-bash">sudo apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common
 sudo curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-sudo echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
+sudo echo &quot;deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable&quot; | sudo tee /etc/apt/sources.list.d/docker.list
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
 sudo systemctl enable docker
 sudo systemctl status docker
-```
-
----
-
-### 🔹 Étape 2 : Ajout des utilisateurs à Docker (pour éviter l’utilisation de sudo)
-
-👤 **Ajouter l'utilisateur au groupe `docker`** :
-```bash
-usermod -aG docker ${USER}
-```
-
----
-
-### 🔹 Étape 3 : Vérification du bon fonctionnement de Docker
-
-✅ **Tester le fonctionnement** :
-```bash
-docker run hello-world
-```
-
----
-<div style="page-break-after: always;"></div>
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-## Phase 3 : Déploiement de Kubernetes
-
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-### 🔹 Étape 1 : Installation de Kubernetes (kubeadm, kubelet, kubectl)
-
-🛠️ **Préparation** :
-```bash
-sudo modprobe br_netfilter
-```
-
-📚 [Installer Kubernetes via kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)  
-```bash
-sudo apt-get update
+</code></pre>
+<hr>
+<h3>🔹 Étape 2 : Ajout des utilisateurs à Docker (pour éviter l’utilisation de sudo)</h3>
+<p>👤 <strong>Ajouter l'utilisateur au groupe <code>docker</code></strong> :</p>
+<pre><code class="language-bash">usermod -aG docker ${USER}
+</code></pre>
+<hr>
+<h3>🔹 Étape 3 : Vérification du bon fonctionnement de Docker</h3>
+<p>✅ <strong>Tester le fonctionnement</strong> :</p>
+<pre><code class="language-bash">docker run hello-world
+</code></pre>
+<hr>
+<hr class="gradient-warm">
+<h2>Phase 3 : Déploiement de Kubernetes</h2>
+<hr class="gradient-warm">
+<h3>🔹 Étape 1 : Installation de Kubernetes (kubeadm, kubelet, kubectl)</h3>
+<p>🛠️ <strong>Préparation</strong> :</p>
+<pre><code class="language-bash">sudo modprobe br_netfilter
+</code></pre>
+<p>📚 <a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/">Installer Kubernetes via kubeadm</a></p>
+<pre><code class="language-bash">sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
@@ -173,27 +122,18 @@ sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 sudo systemctl enable --now kubelet
-```
-
-📦 [Télécharger cri-dockerd](https://github.com/Mirantis/cri-dockerd/releases/tag/v0.3.17)
-```bash
-wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.17/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
+</code></pre>
+<p>📦 <a href="https://github.com/Mirantis/cri-dockerd/releases/tag/v0.3.17">Télécharger cri-dockerd</a></p>
+<pre><code class="language-bash">wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.17/cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
 sudo dpkg -i cri-dockerd_0.3.17.3-0.debian-bookworm_amd64.deb
-```
-
----
-
-### 🔹 Étape 2 : Initialisation du cluster
-
-🚀 **Initialiser le cluster** :
-```bash
-sudo kubeadm init --cri-socket unix:///var/run/cri-dockerd.sock
-```
-
-🔧 **Configurer kubectl** :
-
-```bash
-# Si on est en root
+</code></pre>
+<hr>
+<h3>🔹 Étape 2 : Initialisation du cluster</h3>
+<p>🚀 <strong>Initialiser le cluster</strong> :</p>
+<pre><code class="language-bash">sudo kubeadm init --cri-socket unix:///var/run/cri-dockerd.sock
+</code></pre>
+<p>🔧 <strong>Configurer kubectl</strong> :</p>
+<pre><code class="language-bash"># Si on est en root
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
 # Si on est pas root
@@ -201,46 +141,29 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-```
-
----
-
-### 🔹 Étape 3 : Ajout des nœuds au cluster
-
-**Connexion des workers au noeud master** :
-```bash
-kubeadm join 192.168.142.137:6443 --token lyu32e.828538t417gn9omw \
+</code></pre>
+<hr>
+<h3>🔹 Étape 3 : Ajout des nœuds au cluster</h3>
+<p><strong>Connexion des workers au noeud master</strong> :</p>
+<pre><code class="language-bash">kubeadm join 192.168.142.137:6443 --token lyu32e.828538t417gn9omw \
 	--discovery-token-ca-cert-hash sha256:d49e4ea40e6f390e95ad78ce10441809a5a8fb56eccbbac2f33f89fb2ea81137 --cri-socket unix:///var/run/cri-dockerd.sock
-```
-
-🌐 **Déployer Flannel (réseau Pods)** :
-```bash
-kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml # Sur le master
-```
-
----
-
-### 🔹 Étape 4 : Vérification du bon fonctionnement du cluster
-
-📋 **Vérification** :
-```bash
-kubectl get nodes
+</code></pre>
+<p>🌐 <strong>Déployer Flannel (réseau Pods)</strong> :</p>
+<pre><code class="language-bash">kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml # Sur le master
+</code></pre>
+<hr>
+<h3>🔹 Étape 4 : Vérification du bon fonctionnement du cluster</h3>
+<p>📋 <strong>Vérification</strong> :</p>
+<pre><code class="language-bash">kubectl get nodes
 kubectl get pods
-```
-
----
-
-<div style="page-break-after: always;"></div>
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-## Phase 4 : Déploiement du Site Web
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-### 🔹 Étapes 1 : Écriture d’un Dockerfile (pour contenir l’application web statique)
-
-📝 **Écriture du `Dockerfile` pour app web statique** :
-```bash
-# Utiliser la dernière image officielle de Nginx
+</code></pre>
+<hr>
+<hr class="gradient-warm">
+<h2>Phase 4 : Déploiement du Site Web</h2>
+<hr class="gradient-warm">
+<h3>🔹 Étapes 1 : Écriture d’un Dockerfile (pour contenir l’application web statique)</h3>
+<p>📝 <strong>Écriture du <code>Dockerfile</code> pour app web statique</strong> :</p>
+<pre><code class="language-bash"># Utiliser la dernière image officielle de Nginx
 FROM nginx:latest
 
 # Copier le répertoire contenant le html,css,js dans le répertoire de service de Nginx
@@ -255,51 +178,33 @@ COPY Website_content/rapport.pdf /usr/share/nginx/html/mon_fichier.pdf
 # Copier les certificats SSL dans le répertoire de service de Nginx
 COPY Config/nginx/certs/server.crt /etc/nginx/certs/server.crt
 COPY Config/nginx/certs/server.key /etc/nginx/certs/server.key
-```
-
----
-
-### 🔹 Étapes 2 : Création d’un docker-compose.yml pour l’orchestration locale
-
-📜 **Création du `docker-compose.yml`** :
-```bash
-services:
+</code></pre>
+<hr>
+<h3>🔹 Étapes 2 : Création d’un docker-compose.yml pour l’orchestration locale</h3>
+<p>📜 <strong>Création du <code>docker-compose.yml</code></strong> :</p>
+<pre><code class="language-bash">services:
   static-app:
     build: .
     ports:
-      - "80:80"
-      - "443:443"
+      - &quot;80:80&quot;
+      - &quot;443:443&quot;
     restart: always
-```
-
----
-
-### 🔹 Étapes 3 : Déploiement initial avec Docker Compose pour validation
-
-🧪 **Déploiement local avec Docker Compose** :
-```bash
-docker compose up --build
-```
-
-✅** Test des accès au site :
-
-https://mon-site-local.test:443
-http://mon-site-local.test:80
-
-![[Pasted image 20250604214223.png]]
-
-![[Pasted image 20250604214528.png]]
-
----
-
-### 🔹 Étapes 4 : Création des manifests Kubernetes pour le déploiement sur le cluster
-
-🐳 **Push de l'image docker issue du `Dockerfile` de l'étape 1 sur docker hub afin de pouvoir l'utiliser directement dans les pods.
-
-📜 **Création du  deployment`site-deployment.yaml`** :
-
-```bash
-apiVersion: apps/v1
+</code></pre>
+<hr>
+<h3>🔹 Étapes 3 : Déploiement initial avec Docker Compose pour validation</h3>
+<p>🧪 <strong>Déploiement local avec Docker Compose</strong> :</p>
+<pre><code class="language-bash">docker compose up --build
+</code></pre>
+<p>✅** Test des accès au site :</p>
+<p>https://mon-site-local.test:443
+http://mon-site-local.test:80</p>
+<img src="Pasted image 20250604214223.png" />
+<img src="Pasted image 20250604214528.png" />
+<hr>
+<h3>🔹 Étapes 4 : Création des manifests Kubernetes pour le déploiement sur le cluster</h3>
+<p>🐳 **Push de l'image docker issue du <code>Dockerfile</code> de l'étape 1 sur docker hub afin de pouvoir l'utiliser directement dans les pods.</p>
+<p>📜 <strong>Création du  deployment<code>site-deployment.yaml</code></strong> :</p>
+<pre><code class="language-bash">apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: site-doc-deployment
@@ -319,12 +224,9 @@ spec:
         ports:
         - containerPort: 80
         - containerPort: 443
-```
-
-📜 **Création du service `site-service.yaml`** :
-
-```bash
-apiVersion: v1
+</code></pre>
+<p>📜 <strong>Création du service <code>site-service.yaml</code></strong> :</p>
+<pre><code class="language-bash">apiVersion: v1
 kind: Service
 metadata:
   name: site-doc-service 
@@ -343,51 +245,31 @@ spec:
       port: 4443
       targetPort: 443
       nodePort: 30443
-```
----
-
-### 🔹 Étapes 5 : Déploiement final sur Kubernetes 
-
-🚀 **Déploiement final sur Kubernetes** :
-
-```bash
-kubectl apply -f /home/val_master/Documents/Projet/Project-docs/Kubernetes/App/Site
-```
-
-✅**Test des accès au site :**
-
-https://mon-site-local.test2:30443
-http://mon-site-local.test2:30080
-
-![[Pasted image 20250618151743.png]]
-![[Pasted image 20250618152106.png]]
-
-✅Vérification load balancer :**
-
-Par défaut, le service distribue sans affinité aux pods associés ce qui fait un load-balancer naturel, je peux vérifier en regardant en direct les logs des trois poids qui héberge mon site. A chaque fois, il faut supprimer les données dans le cache pour établir une nouvelle session. Je constate qu'à chaque nouvelle session, les requêtes n'arrivent jamais sur le même pod.
-
-```bash
-kubectl logs -f site-doc-deployment-7887cccc5b-mp5vt
-```
-
-![[Pasted image 20250619112740.png]]
-
----
-<div style="page-break-after: always;"></div>
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-## Phase 5 : Automatisation avec Ansible
-
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-📦 **Dépôt des ressources sur Github**
-```bash
-git clone https://github.com/Valouze14/Projet.git
-```
-
-📜**Création du fichier d'inventories.ini** :
-```bash
-[all]
+</code></pre>
+<hr>
+<h3>🔹 Étapes 5 : Déploiement final sur Kubernetes</h3>
+<p>🚀 <strong>Déploiement final sur Kubernetes</strong> :</p>
+<pre><code class="language-bash">kubectl apply -f /home/val_master/Documents/Projet/Project-docs/Kubernetes/App/Site
+</code></pre>
+<p>✅<strong>Test des accès au site :</strong></p>
+<p>https://mon-site-local.test2:30443
+http://mon-site-local.test2:30080</p>
+<img src="Pasted image 20250618151743.png" />
+<img src="Pasted image 20250618152106.png" />
+<p>✅Vérification load balancer :**</p>
+<p>Par défaut, le service distribue sans affinité aux pods associés ce qui fait un load-balancer naturel, je peux vérifier en regardant en direct les logs des trois poids qui héberge mon site. A chaque fois, il faut supprimer les données dans le cache pour établir une nouvelle session. Je constate qu'à chaque nouvelle session, les requêtes n'arrivent jamais sur le même pod.</p>
+<pre><code class="language-bash">kubectl logs -f site-doc-deployment-7887cccc5b-mp5vt
+</code></pre>
+<p><img src="Pasted image 20250619112740.png" /></p>
+<hr>
+<hr class="gradient-warm">
+<h2>Phase 5 : Automatisation avec Ansible</h2>
+<p><hr class="gradient-warm">    <!-- Ligne jaune/orange --></p>
+<p>📦 <strong>Dépôt des ressources sur Github</strong></p>
+<pre><code class="language-bash">git clone https://github.com/Valouze14/Projet.git
+</code></pre>
+<p>📜<strong>Création du fichier d'inventories.ini</strong> :</p>
+<pre><code class="language-bash">[all]
 192.168.142.137 ansible_user=val_master # VM Master
 192.168.142.144 ansible_user=val_worker1 # VM Worker Node 1
 192.168.142.143 ansible_user=val_worker2 # VM Worker Node 2
@@ -398,15 +280,10 @@ git clone https://github.com/Valouze14/Projet.git
 [workers]
 192.168.142.144
 192.168.142.143
-```
-### 🔹 Étapes 1 : Création des playbooks Ansible pour automatiser l’installation et la configuration
-
-
-
-📜 **Création du fichier setup-hosts.yml** :
-
-```bash
-
+</code></pre>
+<h3>🔹 Étapes 1 : Création des playbooks Ansible pour automatiser l’installation et la configuration</h3>
+<p>📜 <strong>Création du fichier setup-hosts.yml</strong> :</p>
+<pre><code class="language-bash">
 - name: Setup Hosts
   hosts: all
   become: true
@@ -473,13 +350,9 @@ git clone https://github.com/Valouze14/Projet.git
     apt:
       update_cache: true
       upgrade: dist
-```
-
-
-📜 **Création du fichier install-docker.yml** :
-
-```bash
-- name: Install Docker 
+</code></pre>
+<p>📜 <strong>Création du fichier install-docker.yml</strong> :</p>
+<pre><code class="language-bash">- name: Install Docker 
   hosts: all
   become: true
   tasks:
@@ -626,12 +499,9 @@ git clone https://github.com/Valouze14/Projet.git
     args:
       chdir: /home/val_master/Documents/Projet/Project-docs/   # Spécifie le répertoire de travail
     when: inventory_hostname == '192.168.142.137' # Exécuter uniquement sur le nœud maître
-```
-
-📜 **Création du fichier install-k8s.yml** :
-
-```bash
-############################################################
+</code></pre>
+<p>📜 <strong>Création du fichier install-k8s.yml</strong> :</p>
+<pre><code class="language-bash">############################################################
 # 1. Installation des prérequis Kubernetes
 ############################################################
 - name: Installer les paquets et composants Kubernetes
@@ -648,7 +518,7 @@ git clone https://github.com/Valouze14/Projet.git
         state: present
 
     - name: Ajouter la clé GPG officielle de Kubernetes
-      shell: >
+      shell: &gt;
         curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key |
         gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
       args:
@@ -725,7 +595,7 @@ git clone https://github.com/Valouze14/Projet.git
 
     - name: Sauvegarder la commande dans un fact partagé
       set_fact:
-        kube_join_cmd: "{{ join_command.stdout }} --cri-socket unix:///var/run/cri-dockerd.sock"
+        kube_join_cmd: &quot;{{ join_command.stdout }} --cri-socket unix:///var/run/cri-dockerd.sock&quot;
       run_once: true
 
 
@@ -737,7 +607,7 @@ git clone https://github.com/Valouze14/Projet.git
   become: true
   tasks:
     - name: Joindre les workers (sauf master)
-      command: "{{ hostvars['192.168.142.137'].kube_join_cmd }}"
+      command: &quot;{{ hostvars['192.168.142.137'].kube_join_cmd }}&quot;
       when: inventory_hostname != '192.168.142.137'
       register: kubeadm_join_output_workers
       tags: [kubeadm_join_workers]
@@ -787,12 +657,9 @@ git clone https://github.com/Valouze14/Projet.git
         sudo cp -i /etc/kubernetes/admin.conf /home/val_worker2/.kube/config
         sudo chown val_worker2:val_worker2 /home/val_worker2/.kube/config
       when: inventory_hostname == '192.168.142.143'
-```
-
-📜 **Création du fichier install-k8s-manifests.yml** (inclus la phase 6 pour la supervision):
-
-```bash
----
+</code></pre>
+<p>📜 <strong>Création du fichier install-k8s-manifests.yml</strong> (inclus la phase 6 pour la supervision):</p>
+<pre><code class="language-bash">---
 - name: Déploiement des outils de monitoring et des applications Kubernetes (sans collections externes)
   hosts: masters
 
@@ -854,42 +721,23 @@ git clone https://github.com/Valouze14/Projet.git
       args:
         creates: /var/run/docker/cadvisor.pid
 
-```
----
-
-### 🔹 Étapes 2 : Exécution des playbooks pour provisionner l’ensemble des machines
-
-▶️ **Exécution des playbooks sur le parc** : 
-
-```bash
-ansible-playbook Projet/Project-docs/Playbooks/All.yml -i Projet/Ansible/hosts.ini -K
-```
-
----
-
-### 🔹 Étapes 3 : Validation du bon fonctionnement
-
-✅ **Validation de l’installation automatisée** : 
-
-![[Pasted image 20250618155144.png]]
-
----
-
-<div style="page-break-after: always;"></div>
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-## Phase 6 : Maintenance et Supervision
-
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-### 🔹 Étapes 1 : Mise en place de la supervision des conteneurs et du cluster Kubernetes
-
-#####  Déploiement de métriques des conteneurs avec `prometheus`** : 
-
-📜 **Création du config-map prometheus.yml**
-
-```bash
-global:
+</code></pre>
+<hr>
+<h3>🔹 Étapes 2 : Exécution des playbooks pour provisionner l’ensemble des machines</h3>
+<p>▶️ <strong>Exécution des playbooks sur le parc</strong> :</p>
+<pre><code class="language-bash">ansible-playbook Projet/Project-docs/Playbooks/All.yml -i Projet/Ansible/hosts.ini -K
+</code></pre>
+<hr>
+<h3>🔹 Étapes 3 : Validation du bon fonctionnement</h3>
+<p>✅ <strong>Validation de l’installation automatisée</strong> :</p>
+<img src="Pasted image 20250618155144.png" />
+<hr class="gradient-warm">
+<h2>Phase 6 : Maintenance et Supervision</h2>
+<hr class="gradient-warm">
+<h3>🔹 Étapes 1 : Mise en place de la supervision des conteneurs et du cluster Kubernetes</h3>
+<h5>Déploiement de métriques des conteneurs avec <code>prometheus</code>** :</h5>
+<p>📜 <strong>Création du config-map prometheus.yml</strong></p>
+<pre><code class="language-bash">global:
   scrape_interval: 15s
 
 scrape_configs:
@@ -909,12 +757,9 @@ scrape_configs:
     metric_relabel_configs:
     - target_label: cluster
       replacement: YourDefinedK8scluster
-```
-
-📜 **Création du deployment prometheus-deployment.yaml**
-
-```bash
-apiVersion: apps/v1
+</code></pre>
+<p>📜 <strong>Création du deployment prometheus-deployment.yaml</strong></p>
+<pre><code class="language-bash">apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
@@ -932,7 +777,7 @@ spec:
       - name: prometheus
         image: prom/prometheus
         args:
-          - "--config.file=/etc/prometheus/prometheus.yml"
+          - &quot;--config.file=/etc/prometheus/prometheus.yml&quot;
         ports:
           - containerPort: 9090
         volumeMounts:
@@ -942,12 +787,9 @@ spec:
         - name: config-volume
           configMap:
             name: prometheus-config
-```
-
-📜 **Création du service prometheus-service.yaml**
-
-```bash
-apiVersion: v1
+</code></pre>
+<p>📜 <strong>Création du service prometheus-service.yaml</strong></p>
+<pre><code class="language-bash">apiVersion: v1
 kind: Service
 metadata:
   name: prometheus-service
@@ -960,13 +802,10 @@ spec:
       targetPort: 9090
       nodePort: 30200 
   type: NodePort
-```
-##### Mise en place de la supervision avec `grafana`** : 
-
-📜 **Création du deployment grafana-deployment.yaml**
-
-```bash
-apiVersion: apps/v1
+</code></pre>
+<h5>Mise en place de la supervision avec <code>grafana</code>** :</h5>
+<p>📜 <strong>Création du deployment grafana-deployment.yaml</strong></p>
+<pre><code class="language-bash">apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
@@ -985,12 +824,9 @@ spec:
           image: grafana/grafana
           ports:
             - containerPort: 3000
-```
-
-📜 **Création du service grafana-service.yaml**
-
-```bash
-apiVersion: v1
+</code></pre>
+<p>📜 <strong>Création du service grafana-service.yaml</strong></p>
+<pre><code class="language-bash">apiVersion: v1
 kind: Service
 metadata:
   name: grafana-service
@@ -1003,15 +839,11 @@ spec:
       targetPort: 3000
       nodePort: 30500
   type: NodePort
-```
-
----
-### 🔹 Étapes 2 : Déploiement de métriques et logs pour surveiller l’infrastructure
-
- 🐳 **Déploiement de métriques des conteneurs avec `cAdvisor`** : 
-
-```bash 
-docker run -d \
+</code></pre>
+<hr>
+<h3>🔹 Étapes 2 : Déploiement de métriques et logs pour surveiller l’infrastructure</h3>
+<p>🐳 <strong>Déploiement de métriques des conteneurs avec <code>cAdvisor</code></strong> :</p>
+<pre><code class="language-bash">docker run -d \
   --name=cadvisor \
   --restart=unless-stopped \
   --volume=/:/rootfs:ro \
@@ -1020,34 +852,21 @@ docker run -d \
   --volume=/var/lib/docker/:/var/lib/docker:ro \
   -p 8080:8080 \
   gcr.io/cadvisor/cadvisor
-```
-
-📈 **Déploiement de métriques du cluster Kubernetes avec le service `kube-state-metric`** : 
-	
-📦 https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard
-
-✅ **Vérification de la configuration de `prometheus` :
-![[Pasted image 20250619110512.png]]
-✅ **Vérification de la supervision avec `graphana` :
-
-ID template utilisé pour la supervision du cluster Kubernetes : 13332
-
-![[Pasted image 20250619110538.png]]
-
-ID template utilisé pour la supervision les conteneurs : 14282
-
-![[Pasted image 20250619110645.png]]
-
----
-
-### 🔹 Étapes 3 : Automatisation de la gestion des mises à jour avec Ansible
-
-🔁 **Automatisation des MAJ avec Ansible** : 
-
-📜 **Création du playbook mco.yaml**
-
-```bash
----
+</code></pre>
+<p>📈 <strong>Déploiement de métriques du cluster Kubernetes avec le service <code>kube-state-metric</code></strong> :</p>
+<p>📦 https://github.com/kubernetes/kube-state-metrics/tree/main/examples/standard</p>
+<p>✅ **Vérification de la configuration de <code>prometheus</code> :
+<img src="Pasted image 20250619110512.png" />
+✅ **Vérification de la supervision avec <code>graphana</code> :</p>
+<p>ID template utilisé pour la supervision du cluster Kubernetes : 13332</p>
+<img src="Pasted image 20250619110538.png" />
+<p>ID template utilisé pour la supervision les conteneurs : 14282</p>
+<img src="Pasted image 20250619110645.png" />
+<hr>
+<h3>🔹 Étapes 3 : Automatisation de la gestion des mises à jour avec Ansible</h3>
+<p>🔁 <strong>Automatisation des MAJ avec Ansible</strong> :</p>
+<p>📜 <strong>Création du playbook mco.yaml</strong></p>
+<pre><code class="language-bash">---
 - name: MCO
   hosts: all
   become: true
@@ -1070,30 +889,71 @@ ID template utilisé pour la supervision les conteneurs : 14282
     - name: Nettoyer les fichiers temporaires dans /tmp (tous les OS)
       ansible.builtin.command: find /tmp -type f -atime +1 -delete
       changed_when: false
-```
-
----
-
-<div style="page-break-after: always;"></div>
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-## Axes d'améliorations
-
-<hr class="gradient-warm">    <!-- Ligne jaune/orange -->
-
-```bash
-- Segmentation réseau des vm pour avoir un réseau dédié pour l'administration.
+</code></pre>
+<hr class="gradient-warm">
+<h2>Axes d'améliorations</h2>
+<hr class="gradient-warm">
+<pre><code class="language-bash">- Segmentation réseau des vm pour avoir un réseau dédié pour l'administration.
 - Configuration des namesspaces pour éviter de mettre dans le défault.
-- Gestion de log avec promtail et loki (pas réussi à faire fonctionner loki)
-```
----
-## Annexe 1 : ARBORESCENCE
+- 
+</code></pre>
+<hr>
+<h2>Annexe 1 : ARBORESCENCE</h2>
+<hr class="gradient-warm">
+<pre><code class="language-bash">/
+├── etc/
+│   └── Ansible/
+│       └── hosts.ini                # Fichier d'inventaire Ansible
+│
+├── var/
+│   └── log/                         # Répertoire des logs (ex. collecte centralisée)
+│
+├── Project-docs/                    # Répertoire principal du projet DocHub
+│     ├── Playbooks/                 # Playbooks Ansible (installation,config,gestion)
+│     │   ├── setup_machines.yml     # Préparation initiale (OS, utilisateurs, SSH)
+│     │   ├── install_docker.yml     # Installation et configuration de Docker 
+│     │   ├── deploy_kubernetes.yml  # Déploiement de Kubernetes 
+│     │   ├── deploy_website.yml     # Déploiement complet du site web 
+│     │   ├── update_management.yml  # MCO : automatisation des mises à jour
+│     │   └── ...                    # Autres playbooks (supervision,durcissement,etc.)
+│     │
+│     ├── kubernetes_manifests/      # Manifests Kubernetes pour le site web
+│     │   ├── deployment.yaml
+│     │   ├── service.yaml
+│     │   ├── ingress.yaml        
+│     │   └── ...
+│     │
+│     ├── Docker/                    # Dockerfile &amp; docker-compose
+│     │   ├── Dockerfile             # Pour l'app web statique
+│     │   └── docker-compose.yml     # Orchestration locale
+│     │
+│     ├── Website_content/           # Fichiers du site web statique
+│     │   ├── index.html
+│     │   ├── style.css
+│     │   ├── script.js
+│     │   └── rapport.pdf            # Dossier pour le rapport en PDF
+│     │
+│     ├── Documentation/             # Docs Markdown pour le projet
+│     │   ├── rapport.md  
+│     │
+│     ├── Scripts/                   # Scripts utilitaires (bash, python, etc.)
+│     │
+│     └── Config/                    # Fichiers de configuration divers
+│         ├── nginx/                 # Config spécifique à Nginx
+│         │   ├── certs
+│         │   │   ├── server.crt
+│         │   │   └── server.key
+│         │   └── conf
+│         │       └── default.conf
+│         └── ansible                    # Autres configs (monitoring, logs, etc.)
+│             └── ansible.conf
+├── home/
+│   └── val_worker/                  # Répertoire personnel de l’utilisateur
+│       └── .ssh/
+│           ├── id_rsa               # Clé privée SSH (accès sans mot de passe)
+│           └── id_rsa.pub           # Clé publique SSH
 
- <hr class="gradient-warm">    <!-- Ligne jaune/orange -->
 
-```bash
-
-
-```
-
-<div style="page-break-after: always;"></div>
+</code></pre>
+</body>
+</html>
