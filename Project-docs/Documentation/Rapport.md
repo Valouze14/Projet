@@ -1,5 +1,7 @@
 # Déploiement Automatisé d'un Site de Documentation avec MCO/MCS
 
+Valentin LEGRAND, devoir rendu le 20 juin 2025
+
 <hr class="gradient-warm">    <!-- Ligne jaune/orange -->
 
 ## Phase 1 : Préparation des Machines                      
@@ -1188,5 +1190,8 @@ ID template utilisé pour la supervision les conteneurs : 14282
     └── SMB111- Projet - 2024 - 2025.docx.pdf
 
 ```
+
+
+
 
 <div style="page-break-after: always;"></div>

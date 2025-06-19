@@ -9,6 +9,7 @@
 </head>
 <body>
 <h1>Déploiement Automatisé d'un Site de Documentation avec MCO/MCS</h1>
+<p>Valentin LEGRAND, devoir rendu le 20 juin 2025</p>
 <hr class="gradient-warm">
 <h2>Phase 1 : Préparation des Machines</h2>
 <hr class="gradient-warm">
@@ -909,59 +910,89 @@ spec:
 <h2>Annexe 1 : ARBORESCENCE</h2>
 <hr class="gradient-warm">
 <pre><code class="language-bash">/
-├── etc/
-│   └── Ansible/
-│       └── hosts.ini                # Fichier d'inventaire Ansible
-│
-├── var/
-│   └── log/                         # Répertoire des logs (ex. collecte centralisée)
-│
-├── Project-docs/                    # Répertoire principal du projet DocHub
-│     ├── Playbooks/                 # Playbooks Ansible (installation,config,gestion)
-│     │   ├── setup_machines.yml     # Préparation initiale (OS, utilisateurs, SSH)
-│     │   ├── install_docker.yml     # Installation et configuration de Docker 
-│     │   ├── deploy_kubernetes.yml  # Déploiement de Kubernetes 
-│     │   ├── deploy_website.yml     # Déploiement complet du site web 
-│     │   ├── update_management.yml  # MCO : automatisation des mises à jour
-│     │   └── ...                    # Autres playbooks (supervision,durcissement,etc.)
-│     │
-│     ├── kubernetes_manifests/      # Manifests Kubernetes pour le site web
-│     │   ├── deployment.yaml
-│     │   ├── service.yaml
-│     │   ├── ingress.yaml        
-│     │   └── ...
-│     │
-│     ├── Docker/                    # Dockerfile &amp; docker-compose
-│     │   ├── Dockerfile             # Pour l'app web statique
-│     │   └── docker-compose.yml     # Orchestration locale
-│     │
-│     ├── Website_content/           # Fichiers du site web statique
-│     │   ├── index.html
-│     │   ├── style.css
-│     │   ├── script.js
-│     │   └── rapport.pdf            # Dossier pour le rapport en PDF
-│     │
-│     ├── Documentation/             # Docs Markdown pour le projet
-│     │   ├── rapport.md  
-│     │
-│     ├── Scripts/                   # Scripts utilitaires (bash, python, etc.)
-│     │
-│     └── Config/                    # Fichiers de configuration divers
-│         ├── nginx/                 # Config spécifique à Nginx
-│         │   ├── certs
-│         │   │   ├── server.crt
-│         │   │   └── server.key
-│         │   └── conf
-│         │       └── default.conf
-│         └── ansible                    # Autres configs (monitoring, logs, etc.)
-│             └── ansible.conf
-├── home/
-│   └── val_worker/                  # Répertoire personnel de l’utilisateur
-│       └── .ssh/
-│           ├── id_rsa               # Clé privée SSH (accès sans mot de passe)
-│           └── id_rsa.pub           # Clé publique SSH
-
-
+└── Projet
+    ├── Ansible
+    │   └── hosts.ini
+    ├── Project-docs
+    │   ├── Config
+    │   │   └── nginx
+    │   │       ├── certs
+    │   │       │   ├── server.crt
+    │   │       │   └── server.key
+    │   │       └── conf
+    │   │           └── default.conf
+    │   ├── docker-compose.yml
+    │   ├── Dockerfile
+    │   ├── Documentation
+    │   │   ├── Excalidraw
+    │   │   │   └── Drawing 2025-06-11 14.26.16.excalidraw.md
+    │   │   ├── Pasted image 20250604214223.png
+    │   │   ├── Pasted image 20250604214320.png
+    │   │   ├── Pasted image 20250604214528.png
+    │   │   ├── Pasted Image 20250611143455_879.png
+    │   │   ├── Pasted Image 20250611144601_143.png
+    │   │   ├── Pasted image 20250618151743.png
+    │   │   ├── Pasted image 20250618152106.png
+    │   │   ├── Pasted image 20250618155137.png
+    │   │   ├── Pasted image 20250618155144.png
+    │   │   ├── Pasted image 20250619110512.png
+    │   │   ├── Pasted image 20250619110538.png
+    │   │   ├── Pasted image 20250619110645.png
+    │   │   ├── Pasted image 20250619112740.png
+    │   │   ├── Rapport.md
+    │   │   └── Rapport.pdf
+    │   ├── Kubernetes
+    │   │   ├── App
+    │   │   │   ├── grafana
+    │   │   │   │   ├── grafana-deployment.yaml
+    │   │   │   │   └── grafana-service.yaml
+    │   │   │   ├── kube-metrics
+    │   │   │   │   ├── cluster-role-binding.yaml
+    │   │   │   │   ├── cluster-role.yaml
+    │   │   │   │   ├── deployment.yaml
+    │   │   │   │   ├── kustomization.yaml
+    │   │   │   │   ├── metric-service.yaml
+    │   │   │   │   └── service-account.yaml
+    │   │   │   ├── prometheus
+    │   │   │   │   ├── prometheus-deployment.yaml
+    │   │   │   │   └── prometheus-service.yaml
+    │   │   │   └── site
+    │   │   │       ├── site-deployment.yaml
+    │   │   │       └── site-service.yaml
+    │   │   └── Config-map
+    │   │       └── prometheus.yml
+    │   ├── Playbooks
+    │   │   ├── All.yml
+    │   │   ├── install-docker.yml
+    │   │   ├── install-k8s-manifests.yml
+    │   │   ├── install-k8s.yml
+    │   │   ├── mco.yaml
+    │   │   ├── old
+    │   │   │   └── All.yml
+    │   │   └── setup-hosts.yml
+    │   └── Website_content
+    │       ├── index.html
+    │       ├── page
+    │       │   ├── Dark PDF export.css
+    │       │   ├── page.html
+    │       │   ├── Pasted image 20250604214223.png
+    │       │   ├── Pasted image 20250604214320.png
+    │       │   ├── Pasted image 20250604214528.png
+    │       │   ├── Pasted Image 20250611143455_879.png
+    │       │   ├── Pasted Image 20250611144601_143.png
+    │       │   ├── Pasted image 20250618151743.png
+    │       │   ├── Pasted image 20250618152106.png
+    │       │   ├── Pasted image 20250618155137.png
+    │       │   ├── Pasted image 20250618155144.png
+    │       │   ├── Pasted image 20250619110512.png
+    │       │   ├── Pasted image 20250619110538.png
+    │       │   ├── Pasted image 20250619110645.png
+    │       │   ├── Pasted image 20250619112740.png
+    │       │   └── supercharged-links-gen.css
+    │       ├── rapport.pdf
+    │       ├── script.js
+    │       └── style.css
+    └── SMB111- Projet - 2024 - 2025.docx.pdf
 </code></pre>
 </body>
 </html>
