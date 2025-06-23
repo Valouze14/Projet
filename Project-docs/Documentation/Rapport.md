@@ -296,9 +296,8 @@ http://mon-site-local.test:80
 
 ### 🔹 Étapes 4 : Création des manifests Kubernetes pour le déploiement sur le cluster
 
-🚨🚨🚨  **Schéma de l'architecture logiciel :**
 
-![[Pasted image 20250620000359.png]]
+
 
 🐳 **Push de l'image docker issue du `Dockerfile` de l'étape 1 sur docker hub afin de pouvoir l'utiliser directement dans les pods.
 
@@ -1194,6 +1193,10 @@ ID template utilisé pour la supervision les conteneurs : 14282
 ```
 
 
+---
+## Annexe 2 : SCHEMA LOGIQUE
 
-
+ <hr class="gradient-warm">    <!-- Ligne jaune/orange -->
 <div style="page-break-after: always;"></div>
+
+![[Pasted image 20250620000359.png]]
